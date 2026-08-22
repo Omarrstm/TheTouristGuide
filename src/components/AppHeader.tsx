@@ -9,6 +9,13 @@ export default function AppHeader({ user }: { user: { name: string | null } | nu
       </Link>
       <nav className="flex flex-wrap items-center gap-x-5 gap-y-2">
         <Link
+          href="/guides"
+          prefetch={false}
+          className="text-[13px] font-semibold tracking-wide text-muted hover:text-accent"
+        >
+          Guides
+        </Link>
+        <Link
           href="/places/new"
           prefetch={false}
           className="text-[13px] font-semibold tracking-wide text-muted hover:text-accent"
@@ -17,6 +24,13 @@ export default function AppHeader({ user }: { user: { name: string | null } | nu
         </Link>
         {user ? (
           <>
+            <Link
+              href="/messages"
+              prefetch={false}
+              className="text-[13px] font-semibold tracking-wide text-muted hover:text-accent"
+            >
+              Messages
+            </Link>
             <span className="text-[13px] font-semibold tracking-wide text-muted">
               {user.name ?? "Account"}
             </span>

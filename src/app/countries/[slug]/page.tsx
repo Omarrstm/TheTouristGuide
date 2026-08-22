@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import PlaceCard, { type PlaceCardData } from "@/components/PlaceCard";
+import GuideCard from "@/components/GuideCard";
 
 export const dynamic = "force-dynamic";
 
@@ -37,14 +38,21 @@ export default async function CountryPage(props: PageProps<"/countries/[slug]">)
   const country = await prisma.country.findUnique({ where: { slug } });
   if (!country) notFound();
 
-  const places = await prisma.place.findMany({
-    where: { countryId: country.id },
-    orderBy: { createdAt: "desc" },
-    include: {
-      photos: { take: 1, orderBy: { createdAt: "asc" } },
-      reviews: { select: { rating: true } },
-    },
-  });
+  const [places, guides] = await Promise.all([
+    prisma.place.findMany({
+      where: { countryId: country.id },
+      orderBy: { createdAt: "desc" },
+      include: {
+        photos: { take: 1, orderBy: { createdAt: "asc" } },
+        reviews: { select: { rating: true } },
+      },
+    }),
+    prisma.guideProfile.findMany({
+      where: { countryId: country.id, isPublic: true },
+      take: 4,
+      include: { user: { select: { id: true, name: true } } },
+    }),
+  ]);
 
   const attractions = places.filter((p) => !p.isHiddenGem).map(toCardData);
   const hiddenGems = places.filter((p) => p.isHiddenGem).map(toCardData);
@@ -103,6 +111,31 @@ export default async function CountryPage(props: PageProps<"/countries/[slug]">)
           </div>
         )}
       </section>
+
+      {guides.length > 0 && (
+        <section className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="font-display text-[20px] tracking-wide text-text uppercase">
+              Local Guides
+            </h2>
+            <Link
+              href="/guides"
+              prefetch={false}
+              className="text-[12px] font-semibold tracking-wide text-muted underline-offset-2 hover:text-accent hover:underline"
+            >
+              See all guides &rarr;
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {guides.map((g) => (
+              <GuideCard
+                key={g.user.id}
+                guide={{ userId: g.user.id, name: g.user.name, city: g.city, languages: g.languages }}
+              />
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }
