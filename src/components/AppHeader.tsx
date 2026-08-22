@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { logout } from "@/app/actions";
 
-export default function AppHeader({ user }: { user: { name: string | null } | null }) {
+export default function AppHeader({
+  user,
+  hasUnreadMessages = false,
+}: {
+  user: { name: string | null } | null;
+  hasUnreadMessages?: boolean;
+}) {
   return (
     <header className="flex flex-col gap-4 border-b border-border/70 py-5 sm:flex-row sm:items-center sm:justify-between">
       <Link href="/" prefetch={false} className="font-display text-[22px] tracking-[0.1em] text-text uppercase">
@@ -27,9 +33,12 @@ export default function AppHeader({ user }: { user: { name: string | null } | nu
             <Link
               href="/messages"
               prefetch={false}
-              className="text-[13px] font-semibold tracking-wide text-muted hover:text-accent"
+              className="relative text-[13px] font-semibold tracking-wide text-muted hover:text-accent"
             >
               Messages
+              {hasUnreadMessages && (
+                <span className="absolute -top-1 -right-2.5 h-2 w-2 rounded-full bg-accent" />
+              )}
             </Link>
             <span className="text-[13px] font-semibold tracking-wide text-muted">
               {user.name ?? "Account"}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Anton, Manrope } from "next/font/google";
 import { getOptionalUser } from "@/lib/dal";
+import prisma from "@/lib/prisma";
 import AppHeader from "@/components/AppHeader";
 import "./globals.css";
 
@@ -23,6 +24,16 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const user = await getOptionalUser();
+  const hasUnreadMessages = user
+    ? (await prisma.message.findFirst({
+        where: {
+          readAt: null,
+          senderId: { not: user.id },
+          conversation: { OR: [{ travelerId: user.id }, { guideId: user.id }] },
+        },
+        select: { id: true },
+      })) !== null
+    : false;
 
   return (
     <html
@@ -31,7 +42,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 sm:px-6 lg:px-10">
-          <AppHeader user={user ? { name: user.name } : null} />
+          <AppHeader user={user ? { name: user.name } : null} hasUnreadMessages={hasUnreadMessages} />
           <div className="flex-1">{children}</div>
         </div>
       </body>
