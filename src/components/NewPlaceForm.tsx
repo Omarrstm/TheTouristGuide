@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createPlace } from "@/app/actions";
+import LocationAutocomplete, { type PickedLocation } from "@/components/LocationAutocomplete";
 
 type Country = { id: string; name: string; slug: string };
 
@@ -22,6 +23,7 @@ export default function NewPlaceForm({
   const [city, setCity] = useState("");
   const [description, setDescription] = useState("");
   const [isHiddenGem, setIsHiddenGem] = useState(false);
+  const [location, setLocation] = useState<PickedLocation | null>(null);
   const filesRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +33,15 @@ export default function NewPlaceForm({
     const photos = filesRef.current?.files ? Array.from(filesRef.current.files) : [];
     startTransition(async () => {
       try {
-        const { id } = await createPlace({ name, countryId, city, description, isHiddenGem, photos });
+        const { id } = await createPlace({
+          name,
+          countryId,
+          city,
+          description,
+          isHiddenGem,
+          photos,
+          location,
+        });
         router.push(`/places/${id}`);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Couldn't submit this place.");
@@ -97,6 +107,13 @@ export default function NewPlaceForm({
           placeholder="What makes it worth visiting?"
           className="rounded-lg border border-border bg-surface-2 px-3 py-2.5 text-[14px] text-text outline-none placeholder:text-muted focus-visible:border-accent"
         />
+      </label>
+
+      <label className="flex flex-col gap-1">
+        <span className="text-[11px] font-semibold tracking-wide text-muted uppercase">
+          Exact Location (optional)
+        </span>
+        <LocationAutocomplete onSelect={setLocation} onClear={() => setLocation(null)} />
       </label>
 
       <button

@@ -80,6 +80,26 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
 
       <p className="max-w-2xl text-[14.5px] leading-relaxed text-text/90">{place.description}</p>
 
+      {place.latitude != null && place.longitude != null && process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY && (
+        <div className="flex flex-col gap-1.5">
+          <div className="h-72 w-full max-w-2xl overflow-hidden rounded-xl border border-border">
+            <iframe
+              title={`Map of ${place.name}`}
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              loading="lazy"
+              src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=${
+                place.googlePlaceId ? `place_id:${place.googlePlaceId}` : `${place.latitude},${place.longitude}`
+              }`}
+            />
+          </div>
+          {place.formattedAddress && (
+            <p className="text-[12px] text-muted">{place.formattedAddress}</p>
+          )}
+        </div>
+      )}
+
       <section className="flex flex-col gap-4">
         <h2 className="font-display text-[20px] tracking-wide text-text uppercase">Reviews</h2>
 

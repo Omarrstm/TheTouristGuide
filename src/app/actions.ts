@@ -19,6 +19,12 @@ export async function createPlace(input: {
   description: string;
   isHiddenGem: boolean;
   photos: File[];
+  location?: {
+    latitude: number;
+    longitude: number;
+    formattedAddress: string;
+    googlePlaceId: string;
+  } | null;
 }) {
   const { userId } = await verifySession();
   const name = input.name.trim();
@@ -43,6 +49,10 @@ export async function createPlace(input: {
       isHiddenGem: input.isHiddenGem,
       countryId: country.id,
       createdByUserId: userId,
+      latitude: input.location?.latitude ?? null,
+      longitude: input.location?.longitude ?? null,
+      formattedAddress: input.location?.formattedAddress ?? null,
+      googlePlaceId: input.location?.googlePlaceId ?? null,
       photos: { create: photoUrls.map((url) => ({ url, uploadedByUserId: userId })) },
     },
   });
