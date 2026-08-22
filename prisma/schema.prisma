@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String?
+  password    String
+  homeCountry String?
+  createdAt   DateTime @default(now())
+
+  sessions Session[]
+  places   Place[]
+  reviews  Review[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Country {
+  id   String @id @default(cuid())
+  name String @unique
+  slug String @unique
+
+  places Place[]
+}
+
+model Place {
+  id          String  @id @default(cuid())
+  name        String
+  city        String
+  description String
+  isHiddenGem Boolean @default(false)
+  createdAt   DateTime @default(now())
+
+  countryId String
+  country   Country @relation(fields: [countryId], references: [id])
+
+  createdByUserId String?
+  createdBy       User?   @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+  photos  PlacePhoto[]
+  reviews Review[]
+}
+
+model PlacePhoto {
+  id        String   @id @default(cuid())
+  url       String
+  createdAt DateTime @default(now())
+
+  placeId String
+  place   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  uploadedByUserId String?
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?
+  photoUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  placeId String
+  place   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([placeId, userId])
+}
