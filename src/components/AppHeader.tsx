@@ -28,6 +28,14 @@ export default function AppHeader({
         >
           Suggest a Place
         </Link>
+        <form action="/search" method="GET">
+          <input
+            type="search"
+            name="q"
+            placeholder="Search places..."
+            className="w-36 rounded-full border border-border bg-surface-2 px-3.5 py-1.5 text-[12.5px] text-text outline-none placeholder:text-muted focus-visible:border-accent sm:w-48"
+          />
+        </form>
         {user ? (
           <>
             <Link

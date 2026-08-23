@@ -4,6 +4,7 @@ import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createPlace } from "@/app/actions";
 import LocationAutocomplete, { type PickedLocation } from "@/components/LocationAutocomplete";
+import CountrySelect from "@/components/CountrySelect";
 
 type Country = { id: string; name: string; slug: string };
 
@@ -66,21 +67,7 @@ export default function NewPlaceForm({
           <span className="text-[11px] font-semibold tracking-wide text-muted uppercase">
             Country
           </span>
-          <select
-            value={countryId}
-            onChange={(e) => setCountryId(e.target.value)}
-            required
-            className="rounded-lg border border-border bg-surface-2 px-3 py-2.5 text-[14px] text-text outline-none focus-visible:border-accent"
-          >
-            <option value="" disabled>
-              Select a country
-            </option>
-            {countries.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+          <CountrySelect countries={countries} value={countryId} onChange={setCountryId} />
         </label>
 
         <label className="flex flex-col gap-1">
