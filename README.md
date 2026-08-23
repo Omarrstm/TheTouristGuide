@@ -24,7 +24,7 @@ A travel review site: browse touristic places by country, rate and review them, 
 ### Prerequisites
 
 - Node.js
-- A PostgreSQL database (e.g. via `npx create-db` for a free hosted Prisma Postgres instance)
+- A PostgreSQL database (e.g. via `npx create-db` for a free hosted Prisma Postgres instance). Local dev and the deployed production site use **separate** databases — local `DATABASE_URL` lives in `.env`, production's is set directly on the Vercel project (`vercel env add DATABASE_URL production`). Migrations/seed need to be run against both independently, e.g. `DATABASE_URL="<prod-url>" npx prisma migrate deploy`.
 - A Vercel Blob store (only needed for photo uploads — everything else works without it)
 - A Google Cloud API key with "Places API (New)" and "Maps Embed API" enabled, restricted to your domain(s) (only needed for the location-picker on place submission — everything else works without it)
 
