@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import CountrySearch from "@/components/CountrySearch";
 import PlaceCard from "@/components/PlaceCard";
 import Link from "next/link";
+import { delayClass } from "@/lib/animationDelay";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +29,7 @@ export default async function HomePage() {
 
   return (
     <main className="flex flex-col gap-14 pt-10 pb-20">
-      <section className="relative flex flex-col items-start gap-5 overflow-hidden py-10">
+      <section className="fade-slide-up relative flex flex-col items-start gap-5 overflow-hidden py-10">
         <div
           className="pointer-events-none absolute top-0 right-0 -z-10 h-[420px] w-[420px] rounded-full opacity-20 blur-[100px]"
           style={{ background: "var(--color-accent)" }}
@@ -52,12 +53,12 @@ export default async function HomePage() {
             Popular Countries
           </h2>
           <div className="flex flex-wrap gap-2.5">
-            {featuredCountries.map((c) => (
+            {featuredCountries.map((c, i) => (
               <Link
                 key={c.slug}
                 href={`/countries/${c.slug}`}
                 prefetch={false}
-                className="rounded-full border border-border bg-surface px-4 py-2 text-[13px] font-semibold text-text hover:border-accent hover:text-accent"
+                className={`fade-slide-up ${delayClass(i)} rounded-full border border-border bg-surface px-4 py-2 text-[13px] font-semibold text-text hover:border-accent hover:text-accent`}
               >
                 {c.name}{" "}
                 <span className="text-muted">
@@ -75,9 +76,10 @@ export default async function HomePage() {
             Recently Suggested Hidden Gems
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {recentGems.map((p) => (
+            {recentGems.map((p, i) => (
               <PlaceCard
                 key={p.id}
+                className={`fade-slide-up ${delayClass(i)}`}
                 place={{
                   id: p.id,
                   name: p.name,
@@ -93,7 +95,7 @@ export default async function HomePage() {
       )}
 
       {recentGems.length === 0 && (
-        <section className="card-shine flex flex-col items-start gap-3 rounded-2xl p-6">
+        <section className="card-shine fade-slide-up flex flex-col items-start gap-3 rounded-2xl p-6">
           <p className="text-[14px] text-muted">
             No hidden gems suggested yet &mdash; be the first to share a favorite spot only locals
             know about.

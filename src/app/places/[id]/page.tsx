@@ -39,7 +39,7 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
 
   return (
     <main className="flex flex-col gap-8 pt-8 pb-20">
-      <div>
+      <div className="fade-slide-up">
         <Link
           href={`/countries/${place.country.slug}`}
           prefetch={false}

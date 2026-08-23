@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import PlaceCard, { type PlaceCardData } from "@/components/PlaceCard";
 import GuideCard from "@/components/GuideCard";
+import { delayClass } from "@/lib/animationDelay";
 
 export const dynamic = "force-dynamic";
 
@@ -59,7 +60,7 @@ export default async function CountryPage(props: PageProps<"/countries/[slug]">)
 
   return (
     <main className="flex flex-col gap-10 pt-8 pb-20">
-      <div>
+      <div className="fade-slide-up">
         <p className="font-display text-[13px] tracking-[0.12em] text-accent uppercase">
           Country Guide
         </p>
@@ -87,8 +88,8 @@ export default async function CountryPage(props: PageProps<"/countries/[slug]">)
           </p>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {attractions.map((p) => (
-              <PlaceCard key={p.id} place={p} />
+            {attractions.map((p, i) => (
+              <PlaceCard key={p.id} place={p} className={`fade-slide-up ${delayClass(i)}`} />
             ))}
           </div>
         )}
@@ -105,8 +106,8 @@ export default async function CountryPage(props: PageProps<"/countries/[slug]">)
           </p>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {hiddenGems.map((p) => (
-              <PlaceCard key={p.id} place={p} />
+            {hiddenGems.map((p, i) => (
+              <PlaceCard key={p.id} place={p} className={`fade-slide-up ${delayClass(i)}`} />
             ))}
           </div>
         )}
@@ -127,9 +128,10 @@ export default async function CountryPage(props: PageProps<"/countries/[slug]">)
             </Link>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {guides.map((g) => (
+            {guides.map((g, i) => (
               <GuideCard
                 key={g.user.id}
+                className={`fade-slide-up ${delayClass(i)}`}
                 guide={{ userId: g.user.id, name: g.user.name, city: g.city, languages: g.languages }}
               />
             ))}

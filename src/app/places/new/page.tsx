@@ -17,7 +17,7 @@ export default async function NewPlacePage(props: PageProps<"/places/new">) {
 
   return (
     <main className="mx-auto flex w-full max-w-xl flex-col gap-6 pt-8 pb-20">
-      <div>
+      <div className="fade-slide-up">
         <p className="font-display text-[13px] tracking-[0.12em] text-accent uppercase">
           Contribute
         </p>

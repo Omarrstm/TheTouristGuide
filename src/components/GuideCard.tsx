@@ -8,9 +8,15 @@ export type GuideCardData = {
   languages: string[];
 };
 
-export default function GuideCard({ guide }: { guide: GuideCardData }) {
+export default function GuideCard({
+  guide,
+  className = "",
+}: {
+  guide: GuideCardData;
+  className?: string;
+}) {
   return (
-    <Link href={`/guides/${guide.userId}`} prefetch={false}>
+    <Link href={`/guides/${guide.userId}`} prefetch={false} className={className}>
       <div className="card-shine flex h-full flex-col gap-2 rounded-xl p-4">
         <p className="text-[14.5px] font-semibold text-text">{guide.name ?? "Guide"}</p>
         <p className="text-[12px] text-muted">

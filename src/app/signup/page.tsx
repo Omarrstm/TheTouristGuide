@@ -86,7 +86,7 @@ export default function SignupPage() {
         className="pointer-events-none absolute top-0 right-0 -z-10 h-[420px] w-[420px] rounded-full opacity-20 blur-[100px]"
         style={{ background: "var(--color-accent)" }}
       />
-      <div className="card-shine w-full max-w-sm rounded-2xl p-6">
+      <div className="card-shine fade-slide-up w-full max-w-sm rounded-2xl p-6">
         <p className="font-display text-[13px] tracking-[0.12em] text-accent uppercase">
           TheTouristGuide
         </p>

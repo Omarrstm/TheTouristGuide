@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import GuideCard, { type GuideCardData } from "@/components/GuideCard";
+import { delayClass } from "@/lib/animationDelay";
 
 export default function GuideDirectory({ guides }: { guides: GuideCardData[] }) {
   const [query, setQuery] = useState("");
@@ -29,8 +30,8 @@ export default function GuideDirectory({ guides }: { guides: GuideCardData[] }) 
         <p className="text-[13.5px] text-muted">No guides match &ldquo;{query}&rdquo;.</p>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((g) => (
-            <GuideCard key={g.userId} guide={g} />
+          {filtered.map((g, i) => (
+            <GuideCard key={g.userId} guide={g} className={`fade-slide-up ${delayClass(i)}`} />
           ))}
         </div>
       )}

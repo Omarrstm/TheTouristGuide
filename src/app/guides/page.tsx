@@ -13,7 +13,7 @@ export default async function GuidesPage() {
 
   return (
     <main className="flex flex-col gap-6 pt-8 pb-20">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="fade-slide-up flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="font-display text-[13px] tracking-[0.12em] text-accent uppercase">
             Meet the Locals

@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import PlaceCard, { type PlaceCardData } from "@/components/PlaceCard";
+import { delayClass } from "@/lib/animationDelay";
 
 export const dynamic = "force-dynamic";
 
@@ -53,7 +54,7 @@ export default async function SearchPage(props: PageProps<"/search">) {
 
   return (
     <main className="flex flex-col gap-6 pt-8 pb-20">
-      <div>
+      <div className="fade-slide-up">
         <p className="font-display text-[13px] tracking-[0.12em] text-accent uppercase">Search</p>
         <h1 className="font-display text-[32px] leading-none tracking-wide text-text uppercase">
           {q ? `Results for "${q}"` : "Search Places"}
@@ -68,8 +69,8 @@ export default async function SearchPage(props: PageProps<"/search">) {
         <p className="text-[13.5px] text-muted">No places match &ldquo;{q}&rdquo;.</p>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {places.map((p) => (
-            <PlaceCard key={p.id} place={toCardData(p)} />
+          {places.map((p, i) => (
+            <PlaceCard key={p.id} place={toCardData(p)} className={`fade-slide-up ${delayClass(i)}`} />
           ))}
         </div>
       )}

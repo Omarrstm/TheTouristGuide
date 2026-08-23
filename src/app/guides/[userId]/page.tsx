@@ -23,7 +23,7 @@ export default async function GuideDetailPage(props: PageProps<"/guides/[userId]
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-6 pt-8 pb-20">
-      <div>
+      <div className="fade-slide-up">
         <Link
           href="/guides"
           prefetch={false}

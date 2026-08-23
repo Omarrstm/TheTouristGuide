@@ -48,7 +48,7 @@ export default function GuideProfileForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="card-shine flex flex-col gap-4 rounded-2xl p-6">
+    <form onSubmit={handleSubmit} className="card-shine fade-slide-up delay-1 flex flex-col gap-4 rounded-2xl p-6">
       <div className="grid grid-cols-2 gap-3">
         <label className="flex flex-col gap-1">
           <span className="text-[11px] font-semibold tracking-wide text-muted uppercase">

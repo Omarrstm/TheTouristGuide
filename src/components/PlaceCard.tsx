@@ -12,9 +12,15 @@ export type PlaceCardData = {
   reviewCount?: number;
 };
 
-export default function PlaceCard({ place }: { place: PlaceCardData }) {
+export default function PlaceCard({
+  place,
+  className = "",
+}: {
+  place: PlaceCardData;
+  className?: string;
+}) {
   return (
-    <Link href={`/places/${place.id}`} prefetch={false}>
+    <Link href={`/places/${place.id}`} prefetch={false} className={className}>
       <div className="card-shine flex h-full flex-col overflow-hidden rounded-xl">
         <div className="relative h-36 w-full bg-surface-2">
           {place.photoUrl ? (
