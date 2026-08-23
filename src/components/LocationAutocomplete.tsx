@@ -34,14 +34,16 @@ function loadPlacesLibrary(): Promise<google.maps.PlacesLibrary> {
 export default function LocationAutocomplete({
   onSelect,
   onClear,
+  initialLabel = null,
 }: {
   onSelect: (location: PickedLocation) => void;
   onClear?: () => void;
+  initialLabel?: string | null;
 }) {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [focused, setFocused] = useState(false);
-  const [picked, setPicked] = useState<string | null>(null);
+  const [picked, setPicked] = useState<string | null>(initialLabel);
   const [unavailable, setUnavailable] = useState(!API_KEY);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
@@ -113,7 +115,9 @@ export default function LocationAutocomplete({
   }
 
   if (unavailable) {
-    return (
+    return picked ? (
+      <p className="text-[13px] text-text">{picked}</p>
+    ) : (
       <p className="text-[12px] text-muted">
         Location search isn&rsquo;t available right now &mdash; you can still submit this place
         without pinning it on the map.

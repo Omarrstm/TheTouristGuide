@@ -63,6 +63,92 @@ export async function createPlace(input: {
   return { id: place.id };
 }
 
+export async function updatePlace(input: {
+  placeId: string;
+  name: string;
+  countryId: string;
+  city: string;
+  description: string;
+  isHiddenGem: boolean;
+  photos: File[];
+  location?: {
+    latitude: number;
+    longitude: number;
+    formattedAddress: string;
+    googlePlaceId: string;
+  } | null;
+}) {
+  const { userId } = await verifySession();
+
+  const existing = await prisma.place.findUnique({
+    where: { id: input.placeId },
+    include: { country: true },
+  });
+  if (!existing) throw new Error("Place not found.");
+  if (existing.createdByUserId !== userId) {
+    throw new Error("You can only edit places you created.");
+  }
+
+  const name = input.name.trim();
+  const city = input.city.trim();
+  const description = input.description.trim();
+
+  if (name.length < 2) throw new Error("Enter a place name.");
+  if (city.length < 2) throw new Error("Enter a city.");
+  if (description.length < 10) throw new Error("Description must be at least 10 characters.");
+  if (!input.countryId) throw new Error("Pick a country.");
+
+  const country = await prisma.country.findUnique({ where: { id: input.countryId } });
+  if (!country) throw new Error("Pick a valid country.");
+
+  const photoUrls = await uploadPhotos(input.photos.slice(0, 5), "places");
+
+  await prisma.place.update({
+    where: { id: input.placeId },
+    data: {
+      name,
+      city,
+      description,
+      isHiddenGem: input.isHiddenGem,
+      countryId: country.id,
+      latitude: input.location?.latitude ?? null,
+      longitude: input.location?.longitude ?? null,
+      formattedAddress: input.location?.formattedAddress ?? null,
+      googlePlaceId: input.location?.googlePlaceId ?? null,
+      photos: photoUrls.length
+        ? { create: photoUrls.map((url) => ({ url, uploadedByUserId: userId })) }
+        : undefined,
+    },
+  });
+
+  revalidatePath("/");
+  revalidatePath(`/places/${input.placeId}`);
+  revalidatePath(`/countries/${existing.country.slug}`);
+  if (country.slug !== existing.country.slug) revalidatePath(`/countries/${country.slug}`);
+
+  return { id: input.placeId };
+}
+
+export async function deletePlace(placeId: string) {
+  const { userId } = await verifySession();
+
+  const place = await prisma.place.findUnique({
+    where: { id: placeId },
+    include: { country: true },
+  });
+  if (!place) throw new Error("Place not found.");
+  if (place.createdByUserId !== userId) {
+    throw new Error("You can only delete places you created.");
+  }
+
+  await prisma.place.delete({ where: { id: placeId } });
+
+  revalidatePath("/");
+  revalidatePath(`/countries/${place.country.slug}`);
+
+  return { countrySlug: place.country.slug };
+}
+
 export async function createReview(input: {
   placeId: string;
   rating: number;

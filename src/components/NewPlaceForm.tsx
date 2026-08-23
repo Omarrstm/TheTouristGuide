@@ -2,29 +2,41 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { createPlace } from "@/app/actions";
+import { createPlace, updatePlace } from "@/app/actions";
 import LocationAutocomplete, { type PickedLocation } from "@/components/LocationAutocomplete";
 import CountrySelect from "@/components/CountrySelect";
 
 type Country = { id: string; name: string; slug: string };
 
+type EditingPlace = {
+  id: string;
+  name: string;
+  countryId: string;
+  city: string;
+  description: string;
+  isHiddenGem: boolean;
+  location: PickedLocation | null;
+};
+
 export default function NewPlaceForm({
   countries,
   preselectedSlug,
+  editing = null,
 }: {
   countries: Country[];
-  preselectedSlug: string | null;
+  preselectedSlug?: string | null;
+  editing?: EditingPlace | null;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [name, setName] = useState("");
+  const [name, setName] = useState(editing?.name ?? "");
   const [countryId, setCountryId] = useState(
-    countries.find((c) => c.slug === preselectedSlug)?.id ?? ""
+    editing?.countryId ?? countries.find((c) => c.slug === preselectedSlug)?.id ?? ""
   );
-  const [city, setCity] = useState("");
-  const [description, setDescription] = useState("");
-  const [isHiddenGem, setIsHiddenGem] = useState(false);
-  const [location, setLocation] = useState<PickedLocation | null>(null);
+  const [city, setCity] = useState(editing?.city ?? "");
+  const [description, setDescription] = useState(editing?.description ?? "");
+  const [isHiddenGem, setIsHiddenGem] = useState(editing?.isHiddenGem ?? false);
+  const [location, setLocation] = useState<PickedLocation | null>(editing?.location ?? null);
   const filesRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,15 +46,18 @@ export default function NewPlaceForm({
     const photos = filesRef.current?.files ? Array.from(filesRef.current.files) : [];
     startTransition(async () => {
       try {
-        const { id } = await createPlace({
-          name,
-          countryId,
-          city,
-          description,
-          isHiddenGem,
-          photos,
-          location,
-        });
+        const { id } = editing
+          ? await updatePlace({
+              placeId: editing.id,
+              name,
+              countryId,
+              city,
+              description,
+              isHiddenGem,
+              photos,
+              location,
+            })
+          : await createPlace({ name, countryId, city, description, isHiddenGem, photos, location });
         router.push(`/places/${id}`);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Couldn't submit this place.");
@@ -100,7 +115,11 @@ export default function NewPlaceForm({
         <span className="text-[11px] font-semibold tracking-wide text-muted uppercase">
           Exact Location (optional)
         </span>
-        <LocationAutocomplete onSelect={setLocation} onClear={() => setLocation(null)} />
+        <LocationAutocomplete
+          onSelect={setLocation}
+          onClear={() => setLocation(null)}
+          initialLabel={editing?.location?.formattedAddress ?? null}
+        />
       </label>
 
       <button
@@ -117,7 +136,7 @@ export default function NewPlaceForm({
 
       <label className="flex flex-col gap-1">
         <span className="text-[11px] font-semibold tracking-wide text-muted uppercase">
-          Photos (up to 5)
+          {editing ? "Add More Photos (optional, up to 5)" : "Photos (up to 5)"}
         </span>
         <input
           ref={filesRef}
@@ -135,7 +154,7 @@ export default function NewPlaceForm({
         disabled={isPending}
         className="w-full rounded-xl bg-accent py-2.5 text-center text-[13px] font-bold tracking-wide text-bg uppercase disabled:opacity-50"
       >
-        {isPending ? "Submitting..." : "Submit Place"}
+        {isPending ? (editing ? "Saving..." : "Submitting...") : editing ? "Save Changes" : "Submit Place"}
       </button>
     </form>
   );

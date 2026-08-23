@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma";
 import { getOptionalUser } from "@/lib/dal";
 import ReviewCard from "@/components/ReviewCard";
 import ReviewForm from "@/components/ReviewForm";
+import DeletePlaceButton from "@/components/DeletePlaceButton";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +35,7 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
       ? place.reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount
       : null;
   const myReview = user ? place.reviews.find((r) => r.userId === user.id) : undefined;
+  const isOwner = user != null && place.createdByUserId === user.id;
 
   return (
     <main className="flex flex-col gap-8 pt-8 pb-20">
@@ -65,6 +67,18 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
               ({reviewCount} {reviewCount === 1 ? "review" : "reviews"})
             </span>
           </p>
+        )}
+        {isOwner && (
+          <div className="mt-3 flex items-center gap-4">
+            <Link
+              href={`/places/${place.id}/edit`}
+              prefetch={false}
+              className="text-[12px] font-semibold text-muted underline-offset-2 hover:text-accent hover:underline"
+            >
+              Edit
+            </Link>
+            <DeletePlaceButton placeId={place.id} />
+          </div>
         )}
       </div>
 
