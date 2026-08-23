@@ -48,9 +48,13 @@ export default function AppHeader({
                 <span className="absolute -top-1 -right-2.5 h-2 w-2 rounded-full bg-accent" />
               )}
             </Link>
-            <span className="text-[13px] font-semibold tracking-wide text-muted">
+            <Link
+              href="/account"
+              prefetch={false}
+              className="text-[13px] font-semibold tracking-wide text-muted hover:text-accent"
+            >
               {user.name ?? "Account"}
-            </span>
+            </Link>
             <form action={logout}>
               <button
                 type="submit"
