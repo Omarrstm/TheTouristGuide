@@ -22,6 +22,13 @@ export default function AppHeader({
           Guides
         </Link>
         <Link
+          href="/map"
+          prefetch={false}
+          className="text-[13px] font-semibold tracking-wide text-muted hover:text-accent"
+        >
+          Map
+        </Link>
+        <Link
           href="/places/new"
           prefetch={false}
           className="text-[13px] font-semibold tracking-wide text-muted hover:text-accent"
