@@ -1,27 +1,29 @@
-import "dotenv/config";
-import { PrismaClient } from "../src/generated/prisma/client.js";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { OWNER_EMAIL, PLACES } from "./placesData";
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+import { OWNER_EMAIL, PLACES } from "../../../../../prisma/placesData";
 
-const prisma = new PrismaClient({
-  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
-});
+export async function POST(request: Request) {
+  const secret = process.env.SEED_SECRET;
+  if (!secret || request.headers.get("x-seed-secret") !== secret) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-async function main() {
   const owner = await prisma.user.findUnique({ where: { email: OWNER_EMAIL } });
   if (!owner) {
-    throw new Error(
-      `Owner account ${OWNER_EMAIL} not found in this database -- sign up with that email first, or edit OWNER_EMAIL in prisma/placesData.ts.`
+    return NextResponse.json(
+      { error: `Owner account ${OWNER_EMAIL} not found in this database.` },
+      { status: 400 }
     );
   }
 
   let created = 0;
   let skipped = 0;
+  const warnings: string[] = [];
 
   for (const p of PLACES) {
     const country = await prisma.country.findUnique({ where: { name: p.country } });
     if (!country) {
-      console.warn(`Skipping "${p.name}" -- country "${p.country}" not found.`);
+      warnings.push(`Skipping "${p.name}" -- country "${p.country}" not found.`);
       continue;
     }
 
@@ -51,14 +53,5 @@ async function main() {
     created++;
   }
 
-  console.log(`Seeded ${created} places (${skipped} already existed, skipped).`);
+  return NextResponse.json({ created, skipped, warnings });
 }
-
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exitCode = 1;
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
