@@ -129,8 +129,22 @@ body {
   animation-delay: 0.36s;
 }
 
+@keyframes page-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.page-fade {
+  animation: page-fade 0.25s ease both;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .fade-slide-up {
+  .fade-slide-up,
+  .page-fade {
     animation: none;
   }
 }

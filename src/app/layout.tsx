@@ -3,6 +3,7 @@ import { Playfair_Display, Manrope } from "next/font/google";
 import { getOptionalUser } from "@/lib/dal";
 import prisma from "@/lib/prisma";
 import AppHeader from "@/components/AppHeader";
+import PageTransition from "@/components/PageTransition";
 import "./globals.css";
 
 const playfairDisplay = Playfair_Display({
@@ -44,7 +45,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 sm:px-6 lg:px-10">
           <AppHeader user={user ? { name: user.name } : null} hasUnreadMessages={hasUnreadMessages} />
-          <div className="flex-1">{children}</div>
+          <PageTransition>{children}</PageTransition>
         </div>
       </body>
     </html>
