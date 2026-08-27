@@ -1,13 +1,16 @@
 import Link from "next/link";
 import { logout } from "@/app/actions";
 import Logo from "@/components/Logo";
+import NotificationBell, { type NotificationData } from "@/components/NotificationBell";
 
 export default function AppHeader({
   user,
   hasUnreadMessages = false,
+  notifications = [],
 }: {
   user: { name: string | null } | null;
   hasUnreadMessages?: boolean;
+  notifications?: NotificationData[];
 }) {
   return (
     <header className="flex flex-col gap-4 border-b border-border/70 py-5 sm:flex-row sm:items-center sm:justify-between">
@@ -49,6 +52,7 @@ export default function AppHeader({
         </form>
         {user ? (
           <>
+            <NotificationBell notifications={notifications} />
             <Link
               href="/messages"
               prefetch={false}

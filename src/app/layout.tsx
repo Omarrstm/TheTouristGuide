@@ -37,6 +37,23 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       })) !== null
     : false;
 
+  const notifications = user
+    ? (
+        await prisma.notification.findMany({
+          where: { userId: user.id },
+          orderBy: { createdAt: "desc" },
+          take: 10,
+        })
+      ).map((n) => ({
+        id: n.id,
+        title: n.title,
+        body: n.body,
+        href: n.href,
+        createdAt: n.createdAt.toISOString(),
+        readAt: n.readAt?.toISOString() ?? null,
+      }))
+    : [];
+
   return (
     <html
       lang="en"
@@ -44,7 +61,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 sm:px-6 lg:px-10">
-          <AppHeader user={user ? { name: user.name } : null} hasUnreadMessages={hasUnreadMessages} />
+          <AppHeader
+            user={user ? { name: user.name } : null}
+            hasUnreadMessages={hasUnreadMessages}
+            notifications={notifications}
+          />
           <PageTransition>{children}</PageTransition>
         </div>
       </body>

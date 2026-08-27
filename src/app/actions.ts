@@ -6,6 +6,7 @@ import { deleteSession } from "@/lib/session";
 import { verifySession } from "@/lib/dal";
 import prisma from "@/lib/prisma";
 import { uploadPhoto, uploadPhotos } from "@/lib/blob";
+import { notifyUser } from "@/lib/notifications";
 
 export async function logout() {
   await deleteSession();
@@ -180,6 +181,15 @@ export async function createReview(input: {
       photoUrl,
     },
   });
+
+  if (place.createdByUserId && place.createdByUserId !== userId) {
+    await notifyUser({
+      userId: place.createdByUserId,
+      type: "NEW_REVIEW",
+      title: `New review on ${place.name}`,
+      href: `/places/${input.placeId}`,
+    });
+  }
 
   revalidatePath(`/places/${input.placeId}`);
 }

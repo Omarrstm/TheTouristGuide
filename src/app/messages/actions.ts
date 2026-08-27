@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { verifySession } from "@/lib/dal";
 import { revalidatePath } from "next/cache";
+import { notifyUser } from "@/lib/notifications";
 
 async function requireParticipant(conversationId: string, userId: string) {
   const conversation = await prisma.conversation.findUnique({ where: { id: conversationId } });
@@ -35,6 +36,14 @@ export async function startConversation(input: { guideUserId: string; body: stri
     data: { conversationId: conversation.id, senderId: userId, body: trimmed },
   });
 
+  await notifyUser({
+    userId: input.guideUserId,
+    type: "NEW_MESSAGE",
+    title: "New message",
+    body: trimmed.slice(0, 140),
+    href: `/messages/${conversation.id}`,
+  });
+
   revalidatePath("/messages");
   revalidatePath(`/messages/${conversation.id}`);
 
@@ -47,10 +56,20 @@ export async function sendMessage(conversationId: string, body: string) {
   if (trimmed.length > 2000) throw new Error("Message is too long.");
 
   const { userId } = await verifySession();
-  await requireParticipant(conversationId, userId);
+  const conversation = await requireParticipant(conversationId, userId);
 
   await prisma.message.create({
     data: { conversationId, senderId: userId, body: trimmed },
+  });
+
+  const recipientId =
+    conversation.travelerId === userId ? conversation.guideId : conversation.travelerId;
+  await notifyUser({
+    userId: recipientId,
+    type: "NEW_MESSAGE",
+    title: "New message",
+    body: trimmed.slice(0, 140),
+    href: `/messages/${conversationId}`,
   });
 
   revalidatePath("/messages");
