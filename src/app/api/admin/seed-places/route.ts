@@ -18,6 +18,7 @@ export async function POST(request: Request) {
 
   let created = 0;
   let skipped = 0;
+  let photosBackfilled = 0;
   const warnings: string[] = [];
 
   for (const p of PLACES) {
@@ -29,9 +30,18 @@ export async function POST(request: Request) {
 
     const existing = await prisma.place.findFirst({
       where: { name: p.name, countryId: country.id },
+      include: { _count: { select: { photos: true } } },
     });
+
     if (existing) {
-      skipped++;
+      if (existing._count.photos === 0) {
+        await prisma.placePhoto.create({
+          data: { url: p.photoUrl, placeId: existing.id, uploadedByUserId: owner.id },
+        });
+        photosBackfilled++;
+      } else {
+        skipped++;
+      }
       continue;
     }
 
@@ -53,5 +63,5 @@ export async function POST(request: Request) {
     created++;
   }
 
-  return NextResponse.json({ created, skipped, warnings });
+  return NextResponse.json({ created, skipped, photosBackfilled, warnings });
 }
