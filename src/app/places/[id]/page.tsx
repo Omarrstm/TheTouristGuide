@@ -6,6 +6,7 @@ import { getOptionalUser } from "@/lib/dal";
 import ReviewCard from "@/components/ReviewCard";
 import ReviewForm from "@/components/ReviewForm";
 import DeletePlaceButton from "@/components/DeletePlaceButton";
+import ReviewPhotoGallery from "@/components/ReviewPhotoGallery";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,9 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
       : null;
   const myReview = user ? place.reviews.find((r) => r.userId === user.id) : undefined;
   const isOwner = user != null && place.createdByUserId === user.id;
+  const reviewPhotos = place.reviews
+    .filter((r) => r.photoUrl)
+    .map((r) => ({ url: r.photoUrl!, reviewerName: r.user.name }));
 
   return (
     <main className="flex flex-col gap-8 pt-8 pb-20">
@@ -112,6 +116,15 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
             <p className="text-[12px] text-muted">{place.formattedAddress}</p>
           )}
         </div>
+      )}
+
+      {reviewPhotos.length > 0 && (
+        <section className="flex flex-col gap-4">
+          <h2 className="font-display text-[20px] tracking-wide text-text uppercase">
+            Traveler Photos
+          </h2>
+          <ReviewPhotoGallery photos={reviewPhotos} />
+        </section>
       )}
 
       <section className="flex flex-col gap-4">
