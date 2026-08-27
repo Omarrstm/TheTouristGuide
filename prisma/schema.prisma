@@ -29,6 +29,8 @@ model User {
   travelerConversations Conversation[] @relation("TravelerConversations")
   guideConversations    Conversation[] @relation("GuideConversations")
   sentMessages          Message[]      @relation("SentMessages")
+
+  itineraries Itinerary[]
 }
 
 model Session {
@@ -69,6 +71,8 @@ model Place {
 
   photos  PlacePhoto[]
   reviews Review[]
+
+  itineraryPlaces ItineraryPlace[]
 }
 
 model PlacePhoto {
@@ -128,6 +132,30 @@ model Conversation {
   messages Message[]
 
   @@unique([travelerId, guideId])
+}
+
+model Itinerary {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  items ItineraryPlace[]
+}
+
+model ItineraryPlace {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  itineraryId String
+  itinerary   Itinerary @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+
+  placeId String
+  place   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  @@unique([itineraryId, placeId])
 }
 
 model Message {

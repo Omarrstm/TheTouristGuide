@@ -7,6 +7,7 @@ import ReviewCard from "@/components/ReviewCard";
 import ReviewForm from "@/components/ReviewForm";
 import DeletePlaceButton from "@/components/DeletePlaceButton";
 import ReviewPhotoGallery from "@/components/ReviewPhotoGallery";
+import AddToTripButton from "@/components/AddToTripButton";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,20 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
     .filter((r) => r.photoUrl)
     .map((r) => ({ url: r.photoUrl!, reviewerName: r.user.name }));
 
+  const trips = user
+    ? (
+        await prisma.itinerary.findMany({
+          where: { userId: user.id },
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            name: true,
+            items: { where: { placeId: place.id }, select: { id: true } },
+          },
+        })
+      ).map((t) => ({ id: t.id, name: t.name, hasPlace: t.items.length > 0 }))
+    : [];
+
   return (
     <main className="flex flex-col gap-8 pt-8 pb-20">
       <div className="fade-slide-up">
@@ -71,6 +86,11 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
               ({reviewCount} {reviewCount === 1 ? "review" : "reviews"})
             </span>
           </p>
+        )}
+        {user && (
+          <div className="mt-3">
+            <AddToTripButton placeId={place.id} trips={trips} />
+          </div>
         )}
         {isOwner && (
           <div className="mt-3 flex items-center gap-4">

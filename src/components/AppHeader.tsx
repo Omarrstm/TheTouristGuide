@@ -60,6 +60,13 @@ export default function AppHeader({
               )}
             </Link>
             <Link
+              href="/trips"
+              prefetch={false}
+              className="text-[13px] font-semibold tracking-wide text-muted hover:text-accent"
+            >
+              My Trips
+            </Link>
+            <Link
               href="/account"
               prefetch={false}
               className="text-[13px] font-semibold tracking-wide text-muted hover:text-accent"
