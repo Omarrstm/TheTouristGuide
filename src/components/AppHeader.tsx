@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { logout } from "@/app/actions";
+import Logo from "@/components/Logo";
 
 export default function AppHeader({
   user,
@@ -10,8 +11,11 @@ export default function AppHeader({
 }) {
   return (
     <header className="flex flex-col gap-4 border-b border-border/70 py-5 sm:flex-row sm:items-center sm:justify-between">
-      <Link href="/" prefetch={false} className="font-display text-[22px] tracking-[0.1em] text-text uppercase">
-        TheTouristGuide
+      <Link href="/" prefetch={false} className="flex items-center gap-2.5">
+        <Logo />
+        <span className="font-display text-[22px] tracking-[0.1em] text-text uppercase">
+          TheTouristGuide
+        </span>
       </Link>
       <nav className="flex flex-wrap items-center gap-x-5 gap-y-2">
         <Link
@@ -83,7 +87,7 @@ export default function AppHeader({
             <Link
               href="/signup"
               prefetch={false}
-              className="rounded-full bg-accent px-3.5 py-1.5 text-[12px] font-bold text-bg uppercase tracking-wide"
+              className="btn-primary rounded-full"
             >
               Sign Up
             </Link>

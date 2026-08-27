@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense, useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 import { signup } from "./actions";
+import Logo from "@/components/Logo";
 
 function SignupForm() {
   const [state, formAction, pending] = useActionState(signup, undefined);
@@ -66,12 +67,12 @@ function SignupForm() {
         />
       </label>
 
-      {state?.error && <p className="text-[12px] text-red-400">{state.error}</p>}
+      {state?.error && <p className="text-[12px] text-red-600">{state.error}</p>}
 
       <button
         type="submit"
         disabled={pending}
-        className="mt-2 w-full rounded-xl bg-accent py-2.5 text-center text-[13px] font-bold tracking-wide text-bg uppercase disabled:opacity-50"
+        className="btn-primary mt-2 w-full rounded-[4px] text-center text-[13px]"
       >
         {pending ? "Creating..." : "Create Account"}
       </button>
@@ -86,7 +87,8 @@ export default function SignupPage() {
         className="pointer-events-none absolute top-0 right-0 -z-10 h-[420px] w-[420px] rounded-full opacity-20 blur-[100px]"
         style={{ background: "var(--color-accent)" }}
       />
-      <div className="card-shine fade-slide-up w-full max-w-sm rounded-2xl p-6">
+      <div className="card-shine fade-slide-up w-full max-w-sm rounded-[4px] p-6">
+        <Logo className="mb-3" />
         <p className="font-display text-[13px] tracking-[0.12em] text-accent uppercase">
           TheTouristGuide
         </p>

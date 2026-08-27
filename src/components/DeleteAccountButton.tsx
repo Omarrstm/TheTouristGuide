@@ -30,14 +30,14 @@ export default function DeleteAccountButton() {
         value={confirmText}
         onChange={(e) => setConfirmText(e.target.value)}
         placeholder="DELETE"
-        className="w-40 rounded-lg border border-border bg-surface-2 px-3 py-2 text-[13px] text-text outline-none placeholder:text-muted focus-visible:border-red-400"
+        className="w-40 rounded-lg border border-border bg-surface-2 px-3 py-2 text-[13px] text-text outline-none placeholder:text-muted focus-visible:border-red-600"
       />
-      {error && <p className="text-[12px] text-red-400">{error}</p>}
+      {error && <p className="text-[12px] text-red-600">{error}</p>}
       <button
         type="button"
         onClick={handleDelete}
         disabled={confirmText !== "DELETE" || isPending}
-        className="w-fit rounded-lg border border-red-400/60 bg-red-400/10 px-4 py-2 text-[12px] font-bold tracking-wide text-red-400 uppercase disabled:opacity-40"
+        className="w-fit rounded-lg border border-red-600/60 bg-red-600/10 px-4 py-2 text-[12px] font-bold tracking-wide text-red-600 uppercase disabled:opacity-40"
       >
         {isPending ? "Deleting..." : "Delete My Account"}
       </button>

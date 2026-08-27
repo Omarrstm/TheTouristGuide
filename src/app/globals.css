@@ -1,17 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --color-bg: #171310;
-  --color-surface: #1f1913;
-  --color-surface-2: #29211a;
-  --color-border: #3a3026;
-  --color-accent: #e8734a;
-  --color-accent-soft: #e8734a26;
-  --color-accent-teal: #2fb8a6;
-  --color-accent-teal-soft: #2fb8a626;
-  --color-text: #f5ede4;
-  --color-muted: #a69b8d;
-  --color-grid-line: #2fb8a60d;
+  --color-bg: #f7f1e6;
+  --color-surface: #fffdf9;
+  --color-surface-2: #efe6d6;
+  --color-border: #ddceb6;
+  --color-accent: #b8532f;
+  --color-accent-soft: #b8532f1f;
+  --color-accent-teal: #3f5d43;
+  --color-accent-teal-soft: #3f5d431f;
+  --color-text: #241c14;
+  --color-muted: #7a6f5d;
 }
 
 @theme inline {
@@ -31,12 +30,9 @@
 
 body {
   background-color: var(--color-bg);
-  background-image:
-    linear-gradient(var(--color-grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--color-grid-line) 1px, transparent 1px);
-  background-size: 42px 42px;
   color: var(--color-text);
   font-family: var(--font-body), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
 }
 
 .card-shine {
@@ -46,10 +42,10 @@ body {
     linear-gradient(var(--color-surface), var(--color-surface)),
     linear-gradient(
       145deg,
-      rgba(255, 255, 255, 0.4) 0%,
-      rgba(255, 255, 255, 0.04) 30%,
-      rgba(255, 255, 255, 0.02) 70%,
-      rgba(255, 255, 255, 0.16) 100%
+      rgba(36, 28, 20, 0.16) 0%,
+      rgba(36, 28, 20, 0.02) 30%,
+      rgba(36, 28, 20, 0.01) 70%,
+      rgba(36, 28, 20, 0.08) 100%
     );
   background-origin: border-box;
   background-clip: padding-box, border-box;
@@ -61,11 +57,31 @@ body {
     linear-gradient(var(--color-surface), var(--color-surface)),
     linear-gradient(
       145deg,
-      rgba(255, 255, 255, 0.65) 0%,
-      rgba(255, 255, 255, 0.08) 30%,
-      rgba(255, 255, 255, 0.04) 70%,
-      rgba(255, 255, 255, 0.28) 100%
+      rgba(36, 28, 20, 0.28) 0%,
+      rgba(36, 28, 20, 0.05) 30%,
+      rgba(36, 28, 20, 0.02) 70%,
+      rgba(36, 28, 20, 0.14) 100%
     );
+}
+
+.btn-primary {
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+  border: 1px solid var(--color-accent);
+  padding: 0.5rem 1rem;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: opacity 0.15s ease;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
 }
 
 @keyframes fade-slide-up {

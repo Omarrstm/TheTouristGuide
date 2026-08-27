@@ -33,11 +33,11 @@ export default function StartConversationForm({ guideUserId }: { guideUserId: st
         placeholder="Introduce yourself and what you're hoping to plan..."
         className="rounded-lg border border-border bg-surface-2 px-3 py-2.5 text-[14px] text-text outline-none placeholder:text-muted focus-visible:border-accent"
       />
-      {error && <p className="text-[12px] text-red-400">{error}</p>}
+      {error && <p className="text-[12px] text-red-600">{error}</p>}
       <button
         type="submit"
         disabled={isPending || body.trim().length === 0}
-        className="w-fit rounded-lg bg-accent px-4 py-2 text-[12px] font-bold tracking-wide text-bg uppercase disabled:opacity-50"
+        className="btn-primary w-fit rounded-[4px]"
       >
         {isPending ? "Sending..." : "Send Message"}
       </button>

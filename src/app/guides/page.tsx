@@ -29,7 +29,7 @@ export default async function GuidesPage() {
         <Link
           href="/guide/profile"
           prefetch={false}
-          className="rounded-full bg-accent px-4 py-2 text-[12px] font-bold tracking-wide text-bg uppercase"
+          className="btn-primary rounded-full"
         >
           Become a Guide
         </Link>

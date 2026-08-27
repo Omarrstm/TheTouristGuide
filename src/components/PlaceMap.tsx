@@ -15,15 +15,15 @@ export type MapPlace = {
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
-const ACCENT = "#e8734a"; // mirrors --color-accent in globals.css
-const ACCENT_TEAL = "#2fb8a6"; // mirrors --color-accent-teal in globals.css
+const ACCENT = "#b8532f"; // mirrors --color-accent in globals.css
+const ACCENT_TEAL = "#3f5d43"; // mirrors --color-accent-teal in globals.css
 
-const DARK_MAP_STYLES: google.maps.MapTypeStyle[] = [
-  { elementType: "geometry", stylers: [{ color: "#1f1913" }] }, // --color-surface
-  { elementType: "labels.text.fill", stylers: [{ color: "#a69b8d" }] }, // --color-muted
-  { elementType: "labels.text.stroke", stylers: [{ color: "#171310" }] }, // --color-bg
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#171310" }] },
-  { featureType: "road", elementType: "geometry", stylers: [{ color: "#29211a" }] }, // --color-surface-2
+const LIGHT_MAP_STYLES: google.maps.MapTypeStyle[] = [
+  { elementType: "geometry", stylers: [{ color: "#f7f1e6" }] }, // --color-bg
+  { elementType: "labels.text.fill", stylers: [{ color: "#7a6f5d" }] }, // --color-muted
+  { elementType: "labels.text.stroke", stylers: [{ color: "#fffdf9" }] }, // --color-surface
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#e8ddc8" }] },
+  { featureType: "road", elementType: "geometry", stylers: [{ color: "#efe6d6" }] }, // --color-surface-2
   { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
   { featureType: "transit", stylers: [{ visibility: "off" }] },
 ];
@@ -42,7 +42,7 @@ function loadMapsLibrary(): Promise<google.maps.MapsLibrary> {
 }
 
 function markerIcon(color: string): google.maps.Icon {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="7" fill="${color}" stroke="#171310" stroke-width="2"/></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="7" fill="${color}" stroke="#f7f1e6" stroke-width="2"/></svg>`;
   return {
     url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`,
     scaledSize: new google.maps.Size(20, 20),
@@ -68,7 +68,7 @@ export default function PlaceMap({ places }: { places: MapPlace[] }) {
         if (cancelled || !containerRef.current) return;
 
         const map = new maps.Map(containerRef.current, {
-          styles: DARK_MAP_STYLES,
+          styles: LIGHT_MAP_STYLES,
           clickableIcons: false,
         });
         mapRef.current = map;
@@ -146,7 +146,7 @@ export default function PlaceMap({ places }: { places: MapPlace[] }) {
   }
 
   return (
-    <div className="relative h-[420px] w-full overflow-hidden rounded-xl border border-border">
+    <div className="relative h-[420px] w-full overflow-hidden rounded-[4px] border border-border">
       <div ref={containerRef} className="h-full w-full" />
       {status === "loading" && (
         <div className="absolute inset-0 animate-pulse bg-surface-2" />

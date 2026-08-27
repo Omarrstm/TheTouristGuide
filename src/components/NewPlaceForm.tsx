@@ -147,12 +147,12 @@ export default function NewPlaceForm({
         />
       </label>
 
-      {error && <p className="text-[12px] text-red-400">{error}</p>}
+      {error && <p className="text-[12px] text-red-600">{error}</p>}
 
       <button
         type="submit"
         disabled={isPending}
-        className="w-full rounded-xl bg-accent py-2.5 text-center text-[13px] font-bold tracking-wide text-bg uppercase disabled:opacity-50"
+        className="btn-primary w-full rounded-[4px] text-center"
       >
         {isPending ? (editing ? "Saving..." : "Submitting...") : editing ? "Save Changes" : "Submit Place"}
       </button>

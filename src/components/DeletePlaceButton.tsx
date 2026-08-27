@@ -37,12 +37,12 @@ export default function DeletePlaceButton({ placeId }: { placeId: string }) {
         onClick={handleDelete}
         disabled={isPending}
         className={`text-[12px] font-semibold underline-offset-2 hover:underline disabled:opacity-50 ${
-          confirming ? "text-red-400" : "text-muted hover:text-red-400"
+          confirming ? "text-red-600" : "text-muted hover:text-red-600"
         }`}
       >
         {isPending ? "Deleting..." : confirming ? "Confirm delete?" : "Delete"}
       </button>
-      {error && <span className="text-[12px] text-red-400">{error}</span>}
+      {error && <span className="text-[12px] text-red-600">{error}</span>}
     </div>
   );
 }

@@ -75,12 +75,12 @@ export default function ReviewCard({
           rows={3}
           className="mt-2 w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-[14px] text-text outline-none focus-visible:border-accent"
         />
-        {error && <p className="mt-2 text-[12px] text-red-400">{error}</p>}
+        {error && <p className="mt-2 text-[12px] text-red-600">{error}</p>}
         <div className="mt-2.5 flex items-center gap-3">
           <button
             onClick={handleSave}
             disabled={isPending}
-            className="rounded-lg bg-accent px-3.5 py-1.5 text-[12px] font-bold text-bg uppercase disabled:opacity-50"
+            className="btn-primary rounded-[4px]"
           >
             Save
           </button>
@@ -128,7 +128,7 @@ export default function ReviewCard({
             onBlur={() => setConfirmingDelete(false)}
             disabled={isPending}
             className={`text-[12px] font-semibold underline-offset-2 hover:underline disabled:opacity-50 ${
-              confirmingDelete ? "text-red-400" : "text-muted hover:text-red-400"
+              confirmingDelete ? "text-red-600" : "text-muted hover:text-red-600"
             }`}
           >
             {confirmingDelete ? "Confirm?" : "Delete"}

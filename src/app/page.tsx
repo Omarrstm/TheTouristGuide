@@ -2,7 +2,11 @@ import prisma from "@/lib/prisma";
 import CountrySearch from "@/components/CountrySearch";
 import PlaceCard from "@/components/PlaceCard";
 import Link from "next/link";
+import Image from "next/image";
 import { delayClass } from "@/lib/animationDelay";
+
+const HERO_PHOTO_URL =
+  "https://upload.wikimedia.org/wikipedia/commons/f/fa/Giza_Great_Pyramid_of_Khufu_%289793898043%29.jpg";
 
 export const dynamic = "force-dynamic";
 
@@ -29,22 +33,36 @@ export default async function HomePage() {
 
   return (
     <main className="flex flex-col gap-14 pt-10 pb-20">
-      <section className="fade-slide-up relative flex flex-col items-start gap-5 overflow-hidden py-10">
-        <div
-          className="pointer-events-none absolute top-0 right-0 -z-10 h-[420px] w-[420px] rounded-full opacity-20 blur-[100px]"
-          style={{ background: "var(--color-accent)" }}
-        />
-        <p className="font-display text-[13px] tracking-[0.14em] text-accent uppercase">
-          Know before you go
-        </p>
-        <h1 className="max-w-2xl font-display text-[42px] leading-[0.95] tracking-wide text-text uppercase sm:text-[56px]">
-          Don&rsquo;t know where to go? <span className="text-accent-teal">Ask the locals.</span>
-        </h1>
-        <p className="max-w-xl text-[15px] leading-relaxed text-muted">
-          Browse rated touristic places by country, or discover hidden gems that only locals know
-          about &mdash; suggested by the people who actually live there.
-        </p>
-        <CountrySearch countries={countries} />
+      <section className="relative left-1/2 w-screen -translate-x-1/2">
+        <div className="relative h-[520px] w-full sm:h-[600px]">
+          <Image
+            src={HERO_PHOTO_URL}
+            alt="The Great Pyramid of Giza"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+
+          <div className="card-shine fade-slide-up absolute bottom-6 left-4 flex w-[calc(100%-2rem)] max-w-md flex-col items-start gap-3 rounded-[4px] bg-[var(--color-surface)]/95 p-6 shadow-xl sm:bottom-10 sm:left-[calc((100%-72rem)/2+2.5rem)]">
+            <p className="font-display text-[13px] tracking-[0.14em] text-accent uppercase">
+              Know before you go
+            </p>
+            <h1 className="font-display text-[36px] leading-[0.95] tracking-wide text-text uppercase sm:text-[44px]">
+              Don&rsquo;t know where to go?
+            </h1>
+            <p className="font-display text-[20px] text-accent-teal italic">Ask the locals.</p>
+            <p className="text-[14px] leading-relaxed text-muted">
+              Browse rated touristic places by country, or discover hidden gems that only locals
+              know about &mdash; suggested by the people who actually live there.
+            </p>
+            <CountrySearch countries={countries} />
+            <p className="mt-1 text-[11px] tracking-[0.12em] text-muted uppercase">
+              38 places &middot; local-verified
+            </p>
+          </div>
+        </div>
       </section>
 
       {featuredCountries.length > 0 && (
@@ -102,7 +120,7 @@ export default async function HomePage() {
           </p>
           <Link
             href="/places/new"
-            className="rounded-full bg-accent px-4 py-2 text-[12px] font-bold tracking-wide text-bg uppercase"
+            className="btn-primary rounded-full"
           >
             Suggest a Place
           </Link>

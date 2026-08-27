@@ -30,8 +30,8 @@ export default async function AccountPage() {
         <ChangePasswordForm />
       </div>
 
-      <div className="fade-slide-up delay-3 flex flex-col gap-4 rounded-2xl border border-red-400/30 p-6">
-        <h2 className="text-[13px] font-bold tracking-wide text-red-400 uppercase">Danger Zone</h2>
+      <div className="fade-slide-up delay-3 flex flex-col gap-4 rounded-2xl border border-red-600/30 p-6">
+        <h2 className="text-[13px] font-bold tracking-wide text-red-600 uppercase">Danger Zone</h2>
         <DeleteAccountButton />
       </div>
     </main>

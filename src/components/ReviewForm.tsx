@@ -46,11 +46,11 @@ export default function ReviewForm({ placeId }: { placeId: string }) {
         accept="image/*"
         className="text-[12px] text-muted file:mr-3 file:rounded-full file:border-0 file:bg-surface-2 file:px-3 file:py-1.5 file:text-[11px] file:font-semibold file:text-text"
       />
-      {error && <p className="text-[12px] text-red-400">{error}</p>}
+      {error && <p className="text-[12px] text-red-600">{error}</p>}
       <button
         type="submit"
         disabled={isPending}
-        className="w-fit rounded-lg bg-accent px-4 py-2 text-[12px] font-bold tracking-wide text-bg uppercase disabled:opacity-50"
+        className="btn-primary w-fit rounded-[4px]"
       >
         {isPending ? "Posting..." : "Post Review"}
       </button>

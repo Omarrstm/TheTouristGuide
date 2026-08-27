@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Anton, Manrope } from "next/font/google";
+import { Playfair_Display, Manrope } from "next/font/google";
 import { getOptionalUser } from "@/lib/dal";
 import prisma from "@/lib/prisma";
 import AppHeader from "@/components/AppHeader";
 import "./globals.css";
 
-const anton = Anton({
+const playfairDisplay = Playfair_Display({
   variable: "--font-display",
-  weight: "400",
+  weight: ["500", "600", "700"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
 });
 
@@ -38,7 +39,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${anton.variable} ${manrope.variable} h-full antialiased`}
+      className={`${playfairDisplay.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 sm:px-6 lg:px-10">

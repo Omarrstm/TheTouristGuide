@@ -21,7 +21,7 @@ export default function PlaceCard({
 }) {
   return (
     <Link href={`/places/${place.id}`} prefetch={false} className={className}>
-      <div className="card-shine flex h-full flex-col overflow-hidden rounded-xl">
+      <div className="card-shine flex h-full flex-col overflow-hidden rounded-[4px]">
         <div className="relative h-36 w-full bg-surface-2">
           {place.photoUrl ? (
             <Image

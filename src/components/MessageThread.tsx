@@ -84,7 +84,7 @@ export default function MessageThread({
         <div ref={bottomRef} />
       </div>
 
-      {error && <p className="text-[12px] text-red-400">{error}</p>}
+      {error && <p className="text-[12px] text-red-600">{error}</p>}
 
       <form onSubmit={handleSend} className="mt-2 flex items-end gap-2">
         <textarea
@@ -103,7 +103,7 @@ export default function MessageThread({
         <button
           type="submit"
           disabled={pending || body.trim().length === 0}
-          className="shrink-0 rounded-xl bg-accent px-4 py-2.5 text-[12px] font-bold tracking-wide text-bg uppercase disabled:opacity-50"
+          className="btn-primary shrink-0 rounded-[4px]"
         >
           Send
         </button>
