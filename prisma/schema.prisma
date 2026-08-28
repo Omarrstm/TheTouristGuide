@@ -42,6 +42,8 @@ model User {
   guideRatingsReceived GuideRating[] @relation("GuideRatingsReceived")
 
   favorites Favorite[]
+
+  helpfulVotes ReviewHelpfulVote[]
 }
 
 model Session {
@@ -113,7 +115,8 @@ model Review {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  reports Report[]
+  reports       Report[]
+  helpfulVotes  ReviewHelpfulVote[]
 
   @@unique([placeId, userId])
 }
@@ -268,4 +271,17 @@ model Favorite {
   place   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
 
   @@unique([userId, placeId])
+}
+
+model ReviewHelpfulVote {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  reviewId String
+  review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, reviewId])
 }

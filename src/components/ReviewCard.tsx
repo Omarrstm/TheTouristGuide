@@ -7,6 +7,7 @@ import { deleteReview, updateReview } from "@/app/actions";
 import { reportReview } from "@/app/reports/actions";
 import StarRatingInput from "@/components/StarRatingInput";
 import ReportButton from "@/components/ReportButton";
+import HelpfulVoteButton from "@/components/HelpfulVoteButton";
 
 export type ReviewData = {
   id: string;
@@ -16,6 +17,8 @@ export type ReviewData = {
   createdAt: string;
   userId: string;
   userName: string | null;
+  helpfulCount: number;
+  viewerHasVoted: boolean;
 };
 
 export default function ReviewCard({
@@ -138,9 +141,19 @@ export default function ReviewCard({
         </div>
       )}
       {!isOwner && currentUserId && (
-        <div className="mt-2.5">
+        <div className="mt-2.5 flex items-center gap-4">
+          <HelpfulVoteButton
+            reviewId={review.id}
+            initialVoted={review.viewerHasVoted}
+            initialCount={review.helpfulCount}
+          />
           <ReportButton onSubmit={(reason) => reportReview({ reviewId: review.id, reason })} />
         </div>
+      )}
+      {!(!isOwner && currentUserId) && review.helpfulCount > 0 && (
+        <p className="mt-2.5 text-[12px] text-muted">
+          {review.helpfulCount} {review.helpfulCount === 1 ? "person" : "people"} found this helpful
+        </p>
       )}
     </div>
   );

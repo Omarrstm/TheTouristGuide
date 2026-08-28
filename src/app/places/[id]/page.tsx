@@ -24,8 +24,8 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
         country: true,
         photos: { orderBy: { createdAt: "asc" } },
         reviews: {
-          orderBy: { createdAt: "desc" },
-          include: { user: { select: { name: true } } },
+          orderBy: [{ helpfulVotes: { _count: "desc" } }, { createdAt: "desc" }],
+          include: { user: { select: { name: true } }, helpfulVotes: { select: { userId: true } } },
         },
       },
     }),
@@ -195,6 +195,8 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
                   createdAt: review.createdAt.toISOString(),
                   userId: review.userId,
                   userName: review.user.name,
+                  helpfulCount: review.helpfulVotes.length,
+                  viewerHasVoted: user != null && review.helpfulVotes.some((v) => v.userId === user.id),
                 }}
                 currentUserId={user?.id ?? null}
               />

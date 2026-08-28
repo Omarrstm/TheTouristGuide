@@ -216,6 +216,28 @@ export async function updateReview(input: {
   revalidatePath(`/places/${review.placeId}`);
 }
 
+export async function toggleHelpfulVote(reviewId: string): Promise<{ voted: boolean; count: number }> {
+  const { userId } = await verifySession();
+
+  const review = await prisma.review.findUnique({ where: { id: reviewId } });
+  if (!review) throw new Error("Review not found.");
+  if (review.userId === userId) throw new Error("You can't vote on your own review.");
+
+  const existing = await prisma.reviewHelpfulVote.findUnique({
+    where: { userId_reviewId: { userId, reviewId } },
+  });
+
+  if (existing) {
+    await prisma.reviewHelpfulVote.delete({ where: { id: existing.id } });
+  } else {
+    await prisma.reviewHelpfulVote.create({ data: { userId, reviewId } });
+  }
+
+  const count = await prisma.reviewHelpfulVote.count({ where: { reviewId } });
+  revalidatePath(`/places/${review.placeId}`);
+  return { voted: !existing, count };
+}
+
 export async function deleteReview(reviewId: string) {
   const { userId } = await verifySession();
 
