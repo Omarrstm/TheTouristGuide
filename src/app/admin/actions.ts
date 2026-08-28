@@ -22,6 +22,17 @@ export async function deleteReportedReview(reportId: string) {
   revalidatePath("/admin/reports");
 }
 
+export async function deleteReportedPlace(reportId: string) {
+  await requireAdmin();
+
+  const report = await prisma.report.findUnique({ where: { id: reportId } });
+  if (!report?.reportedPlaceId) throw new Error("Report not found.");
+
+  await prisma.place.delete({ where: { id: report.reportedPlaceId } });
+
+  revalidatePath("/admin/reports");
+}
+
 export async function dismissReport(reportId: string) {
   await requireAdmin();
 

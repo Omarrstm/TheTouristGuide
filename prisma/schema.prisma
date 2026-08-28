@@ -79,6 +79,7 @@ model Place {
   reviews Review[]
 
   itineraryPlaces ItineraryPlace[]
+  reports         Report[]
 }
 
 model PlacePhoto {
@@ -114,6 +115,7 @@ model Review {
 enum ReportTargetType {
   REVIEW
   USER
+  PLACE
 }
 
 enum ReportStatus {
@@ -137,6 +139,9 @@ model Report {
 
   reportedUserId String?
   reportedUser   User?   @relation("ReportedUserReports", fields: [reportedUserId], references: [id], onDelete: Cascade)
+
+  reportedPlaceId String?
+  reportedPlace   Place?  @relation(fields: [reportedPlaceId], references: [id], onDelete: Cascade)
 }
 
 model GuideProfile {

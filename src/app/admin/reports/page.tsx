@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { getAdmin } from "@/lib/dal";
 import AdminActionButton from "@/components/AdminActionButton";
 import {
+  deleteReportedPlace,
   deleteReportedReview,
   dismissReport,
   suspendReportedUser,
@@ -27,6 +28,7 @@ export default async function AdminReportsPage() {
           },
         },
         reportedUser: { select: { id: true, name: true, email: true } },
+        reportedPlace: { select: { id: true, name: true, city: true } },
       },
     }),
     prisma.user.findMany({
@@ -55,8 +57,12 @@ export default async function AdminReportsPage() {
             {reports.map((report) => (
               <div key={report.id} className="card-shine flex flex-col gap-2 rounded-[4px] p-4">
                 <p className="text-[11px] font-semibold tracking-wide text-muted uppercase">
-                  {report.targetType === "REVIEW" ? "Review" : "User"} &middot; reported by{" "}
-                  {report.reporter.name ?? report.reporter.email}
+                  {report.targetType === "REVIEW"
+                    ? "Review"
+                    : report.targetType === "USER"
+                      ? "User"
+                      : "Place"}{" "}
+                  &middot; reported by {report.reporter.name ?? report.reporter.email}
                 </p>
                 <p className="text-[13.5px] text-text">{report.reason}</p>
 
@@ -76,6 +82,19 @@ export default async function AdminReportsPage() {
                 {report.targetType === "USER" && report.reportedUser && (
                   <p className="text-[12.5px] text-muted">
                     User: {report.reportedUser.name ?? "—"} ({report.reportedUser.email})
+                  </p>
+                )}
+
+                {report.targetType === "PLACE" && report.reportedPlace && (
+                  <p className="text-[12.5px] text-muted">
+                    Place:{" "}
+                    <Link
+                      href={`/places/${report.reportedPlace.id}`}
+                      className="font-semibold text-accent hover:underline"
+                    >
+                      {report.reportedPlace.name}
+                    </Link>{" "}
+                    ({report.reportedPlace.city})
                   </p>
                 )}
 
@@ -99,6 +118,17 @@ export default async function AdminReportsPage() {
                       action={async () => {
                         "use server";
                         await suspendReportedUser(report.id);
+                      }}
+                    />
+                  )}
+                  {report.targetType === "PLACE" && report.reportedPlaceId && (
+                    <AdminActionButton
+                      label="Delete Place"
+                      confirmLabel="Confirm delete?"
+                      danger
+                      action={async () => {
+                        "use server";
+                        await deleteReportedPlace(report.id);
                       }}
                     />
                   )}

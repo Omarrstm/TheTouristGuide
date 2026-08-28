@@ -8,6 +8,8 @@ import ReviewForm from "@/components/ReviewForm";
 import DeletePlaceButton from "@/components/DeletePlaceButton";
 import ReviewPhotoGallery from "@/components/ReviewPhotoGallery";
 import AddToTripButton from "@/components/AddToTripButton";
+import ReportButton from "@/components/ReportButton";
+import { reportPlace } from "@/app/reports/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -102,6 +104,17 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
               Edit
             </Link>
             <DeletePlaceButton placeId={place.id} />
+          </div>
+        )}
+        {!isOwner && user && (
+          <div className="mt-3">
+            <ReportButton
+              label="Report place"
+              onSubmit={async (reason) => {
+                "use server";
+                await reportPlace({ placeId: place.id, reason });
+              }}
+            />
           </div>
         )}
       </div>
