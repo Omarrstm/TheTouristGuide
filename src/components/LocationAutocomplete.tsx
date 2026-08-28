@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { importLibrary, setOptions } from "@googlemaps/js-api-loader";
+import { useRef, useState } from "react";
 
 export type PickedLocation = {
   latitude: number;
@@ -11,25 +10,18 @@ export type PickedLocation = {
 };
 
 type Suggestion = {
-  placeId: string;
+  osmId: string;
   label: string;
-  prediction: google.maps.places.PlacePrediction;
+  lat: number;
+  lon: number;
 };
 
-const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-
-let optionsSet = false;
-let placesLibraryPromise: Promise<google.maps.PlacesLibrary> | null = null;
-function loadPlacesLibrary(): Promise<google.maps.PlacesLibrary> {
-  if (!placesLibraryPromise) {
-    if (!optionsSet) {
-      setOptions({ key: API_KEY!, v: "weekly" });
-      optionsSet = true;
-    }
-    placesLibraryPromise = importLibrary("places");
-  }
-  return placesLibraryPromise;
-}
+type NominatimResult = {
+  place_id: number;
+  display_name: string;
+  lat: string;
+  lon: string;
+};
 
 export default function LocationAutocomplete({
   onSelect,
@@ -44,14 +36,7 @@ export default function LocationAutocomplete({
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [focused, setFocused] = useState(false);
   const [picked, setPicked] = useState<string | null>(initialLabel);
-  const [unavailable, setUnavailable] = useState(!API_KEY);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
-
-  useEffect(() => {
-    if (!API_KEY) return;
-    loadPlacesLibrary().catch(() => setUnavailable(true));
-  }, []);
 
   function handleChange(value: string) {
     setQuery(value);
@@ -65,64 +50,41 @@ export default function LocationAutocomplete({
 
     debounceRef.current = setTimeout(async () => {
       try {
-        const places = await loadPlacesLibrary();
-        if (!sessionTokenRef.current) {
-          sessionTokenRef.current = new places.AutocompleteSessionToken();
-        }
-        const { suggestions: results } = await places.AutocompleteSuggestion.fetchAutocompleteSuggestions({
-          input: value,
-          sessionToken: sessionTokenRef.current,
-        });
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&q=${encodeURIComponent(value)}`
+        );
+        if (!res.ok) throw new Error("search failed");
+        const results: NominatimResult[] = await res.json();
         setSuggestions(
-          (results ?? [])
-            .filter((r) => r.placePrediction)
-            .map((r) => ({
-              placeId: r.placePrediction!.placeId,
-              label: r.placePrediction!.text.text,
-              prediction: r.placePrediction!,
-            }))
+          results.map((r) => ({
+            osmId: String(r.place_id),
+            label: r.display_name,
+            lat: parseFloat(r.lat),
+            lon: parseFloat(r.lon),
+          }))
         );
       } catch {
-        setUnavailable(true);
+        setSuggestions([]);
       }
-    }, 300);
+    }, 500);
   }
 
-  async function handlePick(suggestion: Suggestion) {
-    try {
-      const place = suggestion.prediction.toPlace();
-      await place.fetchFields({ fields: ["formattedAddress", "location"] });
-      if (!place.location) return;
-      onSelect({
-        latitude: place.location.lat(),
-        longitude: place.location.lng(),
-        formattedAddress: place.formattedAddress ?? suggestion.label,
-        googlePlaceId: suggestion.placeId,
-      });
-      setPicked(place.formattedAddress ?? suggestion.label);
-      setQuery("");
-      setSuggestions([]);
-      setFocused(false);
-      sessionTokenRef.current = null;
-    } catch {
-      setUnavailable(true);
-    }
+  function handlePick(suggestion: Suggestion) {
+    onSelect({
+      latitude: suggestion.lat,
+      longitude: suggestion.lon,
+      formattedAddress: suggestion.label,
+      googlePlaceId: suggestion.osmId,
+    });
+    setPicked(suggestion.label);
+    setQuery("");
+    setSuggestions([]);
+    setFocused(false);
   }
 
   function handleClearPicked() {
     setPicked(null);
     onClear?.();
-  }
-
-  if (unavailable) {
-    return picked ? (
-      <p className="text-[13px] text-text">{picked}</p>
-    ) : (
-      <p className="text-[12px] text-muted">
-        Location search isn&rsquo;t available right now &mdash; you can still submit this place
-        without pinning it on the map.
-      </p>
-    );
   }
 
   return (
@@ -151,7 +113,7 @@ export default function LocationAutocomplete({
           {focused && suggestions.length > 0 && (
             <ul className="card-shine absolute top-full z-10 mt-2 w-full overflow-hidden rounded-lg">
               {suggestions.map((s) => (
-                <li key={s.placeId}>
+                <li key={s.osmId}>
                   <button
                     type="button"
                     onMouseDown={() => handlePick(s)}

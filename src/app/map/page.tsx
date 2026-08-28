@@ -63,13 +63,7 @@ export default async function MapPage() {
         </h1>
       </div>
 
-      {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? (
-        <PlaceMap places={mapPlaces} />
-      ) : (
-        <p className="text-[13px] text-muted">
-          The interactive map isn&rsquo;t available right now &mdash; browse all places in the grid below.
-        </p>
-      )}
+      <PlaceMap places={mapPlaces} />
 
       <section className="flex flex-col gap-4">
         <h2 className="font-display text-[20px] tracking-wide text-text uppercase">All Places</h2>

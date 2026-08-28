@@ -118,7 +118,7 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
 
       <p className="max-w-2xl text-[14.5px] leading-relaxed text-text/90">{place.description}</p>
 
-      {place.latitude != null && place.longitude != null && process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY && (
+      {place.latitude != null && place.longitude != null && (
         <div className="flex flex-col gap-1.5">
           <div className="h-72 w-full max-w-2xl overflow-hidden rounded-xl border border-border">
             <iframe
@@ -127,9 +127,7 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
               height="100%"
               style={{ border: 0 }}
               loading="lazy"
-              src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=${
-                place.googlePlaceId ? `place_id:${place.googlePlaceId}` : `${place.latitude},${place.longitude}`
-              }`}
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=${place.longitude - 0.01}%2C${place.latitude - 0.01}%2C${place.longitude + 0.01}%2C${place.latitude + 0.01}&layer=mapnik&marker=${place.latitude}%2C${place.longitude}`}
             />
           </div>
           {place.formattedAddress && (

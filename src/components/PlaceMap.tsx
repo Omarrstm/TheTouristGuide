@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { importLibrary, setOptions } from "@googlemaps/js-api-loader";
+import type { Map as LeafletMap } from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 export type MapPlace = {
   id: string;
@@ -13,113 +14,75 @@ export type MapPlace = {
   longitude: number;
 };
 
-const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-
 const ACCENT = "#b8532f"; // mirrors --color-accent in globals.css
 const ACCENT_TEAL = "#3f5d43"; // mirrors --color-accent-teal in globals.css
 
-const LIGHT_MAP_STYLES: google.maps.MapTypeStyle[] = [
-  { elementType: "geometry", stylers: [{ color: "#f7f1e6" }] }, // --color-bg
-  { elementType: "labels.text.fill", stylers: [{ color: "#7a6f5d" }] }, // --color-muted
-  { elementType: "labels.text.stroke", stylers: [{ color: "#fffdf9" }] }, // --color-surface
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#e8ddc8" }] },
-  { featureType: "road", elementType: "geometry", stylers: [{ color: "#efe6d6" }] }, // --color-surface-2
-  { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
-  { featureType: "transit", stylers: [{ visibility: "off" }] },
-];
-
-let optionsSet = false;
-let mapsLibraryPromise: Promise<google.maps.MapsLibrary> | null = null;
-function loadMapsLibrary(): Promise<google.maps.MapsLibrary> {
-  if (!mapsLibraryPromise) {
-    if (!optionsSet) {
-      setOptions({ key: API_KEY!, v: "weekly" });
-      optionsSet = true;
-    }
-    mapsLibraryPromise = importLibrary("maps");
-  }
-  return mapsLibraryPromise;
-}
-
-function markerIcon(color: string): google.maps.Icon {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="7" fill="${color}" stroke="#f7f1e6" stroke-width="2"/></svg>`;
-  return {
-    url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`,
-    scaledSize: new google.maps.Size(20, 20),
-    anchor: new google.maps.Point(10, 10),
-  };
-}
-
 export default function PlaceMap({ places }: { places: MapPlace[] }) {
-  const [status, setStatus] = useState<"loading" | "ready" | "unavailable">(
-    API_KEY ? "loading" : "unavailable"
-  );
+  const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
+  const mapRef = useRef<LeafletMap | null>(null);
 
   useEffect(() => {
-    if (!API_KEY || !containerRef.current) return;
+    if (!containerRef.current) return;
 
     let cancelled = false;
 
-    loadMapsLibrary()
-      .then((maps) => {
+    import("leaflet")
+      .then((L) => {
         if (cancelled || !containerRef.current) return;
 
-        const map = new maps.Map(containerRef.current, {
-          styles: LIGHT_MAP_STYLES,
-          clickableIcons: false,
-        });
+        const map = L.map(containerRef.current);
         mapRef.current = map;
 
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 19,
+        }).addTo(map);
+
         if (places.length === 0) {
-          map.setCenter({ lat: 20, lng: 0 });
-          map.setZoom(2);
+          map.setView([20, 0], 2);
         } else if (places.length === 1) {
-          map.setCenter({ lat: places[0].latitude, lng: places[0].longitude });
-          map.setZoom(13);
+          map.setView([places[0].latitude, places[0].longitude], 13);
         } else {
-          const bounds = new google.maps.LatLngBounds();
-          places.forEach((p) => bounds.extend({ lat: p.latitude, lng: p.longitude }));
-          map.fitBounds(bounds);
+          map.fitBounds(
+            L.latLngBounds(places.map((p) => [p.latitude, p.longitude] as [number, number])),
+            { padding: [24, 24] }
+          );
         }
 
-        const infoWindow = new google.maps.InfoWindow();
+        const markerIcon = (color: string) =>
+          L.divIcon({
+            className: "",
+            html: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="7" fill="${color}" stroke="#f7f1e6" stroke-width="2"/></svg>`,
+            iconSize: [20, 20],
+            iconAnchor: [10, 10],
+          });
 
-        markersRef.current = places.map((place) => {
-          const marker = new google.maps.Marker({
-            map,
-            position: { lat: place.latitude, lng: place.longitude },
-            title: place.name,
+        places.forEach((place) => {
+          const marker = L.marker([place.latitude, place.longitude], {
             icon: markerIcon(place.isHiddenGem ? ACCENT_TEAL : ACCENT),
-          });
+          }).addTo(map);
 
-          marker.addListener("click", () => {
-            const content = document.createElement("div");
-            content.className = "flex flex-col gap-1 p-1";
+          const content = document.createElement("div");
+          content.className = "flex flex-col gap-1 p-1";
 
-            const title = document.createElement("p");
-            title.className = "text-[13.5px] font-semibold text-text";
-            title.textContent = place.name;
-            content.appendChild(title);
+          const title = document.createElement("p");
+          title.className = "text-[13.5px] font-semibold text-text";
+          title.textContent = place.name;
+          content.appendChild(title);
 
-            const subtitle = document.createElement("p");
-            subtitle.className = "text-[12px] text-muted";
-            subtitle.textContent = `${place.city}, ${place.countryName}`;
-            content.appendChild(subtitle);
+          const subtitle = document.createElement("p");
+          subtitle.className = "text-[12px] text-muted";
+          subtitle.textContent = `${place.city}, ${place.countryName}`;
+          content.appendChild(subtitle);
 
-            const link = document.createElement("a");
-            link.href = `/places/${place.id}`;
-            link.textContent = "View place →";
-            link.className = "mt-1 text-[12px] font-semibold text-accent";
-            content.appendChild(link);
+          const link = document.createElement("a");
+          link.href = `/places/${place.id}`;
+          link.textContent = "View place →";
+          link.className = "mt-1 text-[12px] font-semibold text-accent";
+          content.appendChild(link);
 
-            infoWindow.setContent(content);
-            infoWindow.open({ map, anchor: marker });
-          });
-
-          return marker;
+          marker.bindPopup(content);
         });
 
         setStatus("ready");
@@ -130,8 +93,7 @@ export default function PlaceMap({ places }: { places: MapPlace[] }) {
 
     return () => {
       cancelled = true;
-      markersRef.current.forEach((m) => m.setMap(null));
-      markersRef.current = [];
+      mapRef.current?.remove();
       mapRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -148,9 +110,7 @@ export default function PlaceMap({ places }: { places: MapPlace[] }) {
   return (
     <div className="relative h-[420px] w-full overflow-hidden rounded-[4px] border border-border">
       <div ref={containerRef} className="h-full w-full" />
-      {status === "loading" && (
-        <div className="absolute inset-0 animate-pulse bg-surface-2" />
-      )}
+      {status === "loading" && <div className="absolute inset-0 animate-pulse bg-surface-2" />}
     </div>
   );
 }
