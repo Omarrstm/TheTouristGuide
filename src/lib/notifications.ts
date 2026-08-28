@@ -8,7 +8,7 @@ function absoluteUrl(href: string) {
 
 export async function notifyUser(input: {
   userId: string;
-  type: "NEW_MESSAGE" | "NEW_REVIEW";
+  type: "NEW_MESSAGE" | "NEW_REVIEW" | "NEW_GUIDE_RATING";
   title: string;
   body?: string;
   href: string;

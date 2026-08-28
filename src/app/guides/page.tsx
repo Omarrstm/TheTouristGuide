@@ -8,8 +8,22 @@ export default async function GuidesPage() {
   const guides = await prisma.guideProfile.findMany({
     where: { isPublic: true },
     orderBy: { createdAt: "desc" },
-    include: { user: { select: { id: true, name: true } }, country: { select: { name: true } } },
+    include: {
+      user: { select: { id: true, name: true } },
+      country: { select: { name: true } },
+    },
   });
+
+  const ratings = await prisma.guideRating.findMany({
+    where: { guideUserId: { in: guides.map((g) => g.user.id) } },
+    select: { guideUserId: true, rating: true },
+  });
+  const ratingsByGuide = new Map<string, number[]>();
+  for (const r of ratings) {
+    const list = ratingsByGuide.get(r.guideUserId) ?? [];
+    list.push(r.rating);
+    ratingsByGuide.set(r.guideUserId, list);
+  }
 
   return (
     <main className="flex flex-col gap-6 pt-8 pb-20">
@@ -41,13 +55,22 @@ export default async function GuidesPage() {
         </p>
       ) : (
         <GuideDirectory
-          guides={guides.map((g) => ({
-            userId: g.user.id,
-            name: g.user.name,
-            city: g.city,
-            countryName: g.country.name,
-            languages: g.languages,
-          }))}
+          guides={guides.map((g) => {
+            const guideRatings = ratingsByGuide.get(g.user.id) ?? [];
+            const avgRating =
+              guideRatings.length > 0
+                ? guideRatings.reduce((sum, r) => sum + r, 0) / guideRatings.length
+                : null;
+            return {
+              userId: g.user.id,
+              name: g.user.name,
+              city: g.city,
+              countryName: g.country.name,
+              languages: g.languages,
+              avgRating,
+              ratingCount: guideRatings.length,
+            };
+          })}
         />
       )}
     </main>

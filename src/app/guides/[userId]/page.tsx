@@ -5,23 +5,34 @@ import { getOptionalUser } from "@/lib/dal";
 import StartConversationForm from "@/components/StartConversationForm";
 import ReportButton from "@/components/ReportButton";
 import { reportUser } from "@/app/reports/actions";
+import GuideRatingForm from "@/components/GuideRatingForm";
+import GuideRatingCard from "@/components/GuideRatingCard";
 
 export const dynamic = "force-dynamic";
 
 export default async function GuideDetailPage(props: PageProps<"/guides/[userId]">) {
   const { userId } = await props.params;
 
-  const [profile, viewer] = await Promise.all([
+  const [profile, viewer, ratings] = await Promise.all([
     prisma.guideProfile.findUnique({
       where: { userId },
       include: { user: { select: { id: true, name: true } }, country: true },
     }),
     getOptionalUser(),
+    prisma.guideRating.findMany({
+      where: { guideUserId: userId },
+      orderBy: { createdAt: "desc" },
+      include: { rater: { select: { name: true } } },
+    }),
   ]);
 
   if (!profile || (!profile.isPublic && viewer?.id !== userId)) notFound();
 
   const isSelf = viewer?.id === userId;
+  const ratingCount = ratings.length;
+  const avgRating =
+    ratingCount > 0 ? ratings.reduce((sum, r) => sum + r.rating, 0) / ratingCount : null;
+  const viewerHasRated = viewer != null && ratings.some((r) => r.raterId === viewer.id);
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-6 pt-8 pb-20">
@@ -42,6 +53,14 @@ export default async function GuideDetailPage(props: PageProps<"/guides/[userId]
         <p className="mt-1 text-[13.5px] text-muted">
           {profile.city}, {profile.country.name}
         </p>
+        {avgRating != null && (
+          <p className="mt-2 text-[14px] font-semibold text-accent">
+            &#9733; {avgRating.toFixed(1)}{" "}
+            <span className="font-normal text-muted">
+              ({ratingCount} {ratingCount === 1 ? "rating" : "ratings"})
+            </span>
+          </p>
+        )}
         {profile.languages.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1.5">
             {profile.languages.map((l) => (
@@ -90,6 +109,33 @@ export default async function GuideDetailPage(props: PageProps<"/guides/[userId]
           to message this guide.
         </p>
       )}
+
+      <section className="flex flex-col gap-4">
+        <h2 className="font-display text-[20px] tracking-wide text-text uppercase">Ratings</h2>
+
+        {!isSelf && viewer && !viewerHasRated && <GuideRatingForm guideUserId={userId} />}
+
+        {ratings.length === 0 ? (
+          <p className="text-[13.5px] text-muted">No ratings yet.</p>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {ratings.map((r) => (
+              <GuideRatingCard
+                key={r.id}
+                rating={{
+                  id: r.id,
+                  rating: r.rating,
+                  comment: r.comment,
+                  createdAt: r.createdAt.toISOString(),
+                  raterId: r.raterId,
+                  raterName: r.rater.name,
+                }}
+                currentUserId={viewer?.id ?? null}
+              />
+            ))}
+          </div>
+        )}
+      </section>
     </main>
   );
 }

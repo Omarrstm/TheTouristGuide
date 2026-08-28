@@ -37,6 +37,9 @@ model User {
 
   reportsFiled    Report[] @relation("ReporterReports")
   reportsReceived Report[] @relation("ReportedUserReports")
+
+  guideRatingsGiven    GuideRating[] @relation("GuideRatingsGiven")
+  guideRatingsReceived GuideRating[] @relation("GuideRatingsReceived")
 }
 
 model Session {
@@ -202,6 +205,7 @@ model ItineraryPlace {
 enum NotificationType {
   NEW_MESSAGE
   NEW_REVIEW
+  NEW_GUIDE_RATING
 }
 
 model Notification {
@@ -232,4 +236,20 @@ model Message {
   sender   User   @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([conversationId, createdAt])
+}
+
+model GuideRating {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  raterId String
+  rater   User   @relation("GuideRatingsGiven", fields: [raterId], references: [id], onDelete: Cascade)
+
+  guideUserId String
+  guideUser   User   @relation("GuideRatingsReceived", fields: [guideUserId], references: [id], onDelete: Cascade)
+
+  @@unique([guideUserId, raterId])
 }
