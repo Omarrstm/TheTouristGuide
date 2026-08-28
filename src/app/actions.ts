@@ -19,6 +19,7 @@ export async function createPlace(input: {
   city: string;
   description: string;
   isHiddenGem: boolean;
+  costTier?: "BUDGET" | "MODERATE" | "EXPENSIVE" | null;
   photos: File[];
   location?: {
     latitude: number;
@@ -48,6 +49,7 @@ export async function createPlace(input: {
       city,
       description,
       isHiddenGem: input.isHiddenGem,
+      costTier: input.costTier ?? null,
       countryId: country.id,
       createdByUserId: userId,
       latitude: input.location?.latitude ?? null,
@@ -71,6 +73,7 @@ export async function updatePlace(input: {
   city: string;
   description: string;
   isHiddenGem: boolean;
+  costTier?: "BUDGET" | "MODERATE" | "EXPENSIVE" | null;
   photos: File[];
   location?: {
     latitude: number;
@@ -111,6 +114,7 @@ export async function updatePlace(input: {
       city,
       description,
       isHiddenGem: input.isHiddenGem,
+      costTier: input.costTier ?? null,
       countryId: country.id,
       latitude: input.location?.latitude ?? null,
       longitude: input.location?.longitude ?? null,

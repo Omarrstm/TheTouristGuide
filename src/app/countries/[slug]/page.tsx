@@ -13,6 +13,7 @@ function toCardData(
     name: string;
     city: string;
     isHiddenGem: boolean;
+    costTier: "BUDGET" | "MODERATE" | "EXPENSIVE" | null;
     photos: { url: string }[];
     reviews: { rating: number }[];
   }
@@ -27,6 +28,7 @@ function toCardData(
     name: place.name,
     city: place.city,
     isHiddenGem: place.isHiddenGem,
+    costTier: place.costTier,
     photoUrl: place.photos[0]?.url ?? null,
     avgRating,
     reviewCount,

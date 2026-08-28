@@ -8,6 +8,8 @@ import CountrySelect from "@/components/CountrySelect";
 
 type Country = { id: string; name: string; slug: string };
 
+type CostTier = "BUDGET" | "MODERATE" | "EXPENSIVE";
+
 type EditingPlace = {
   id: string;
   name: string;
@@ -15,6 +17,7 @@ type EditingPlace = {
   city: string;
   description: string;
   isHiddenGem: boolean;
+  costTier: CostTier | null;
   location: PickedLocation | null;
 };
 
@@ -36,6 +39,7 @@ export default function NewPlaceForm({
   const [city, setCity] = useState(editing?.city ?? "");
   const [description, setDescription] = useState(editing?.description ?? "");
   const [isHiddenGem, setIsHiddenGem] = useState(editing?.isHiddenGem ?? false);
+  const [costTier, setCostTier] = useState<CostTier | null>(editing?.costTier ?? null);
   const [location, setLocation] = useState<PickedLocation | null>(editing?.location ?? null);
   const filesRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -54,10 +58,20 @@ export default function NewPlaceForm({
               city,
               description,
               isHiddenGem,
+              costTier,
               photos,
               location,
             })
-          : await createPlace({ name, countryId, city, description, isHiddenGem, photos, location });
+          : await createPlace({
+              name,
+              countryId,
+              city,
+              description,
+              isHiddenGem,
+              costTier,
+              photos,
+              location,
+            });
         router.push(`/places/${id}`);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Couldn't submit this place.");
@@ -133,6 +147,34 @@ export default function NewPlaceForm({
       >
         {isHiddenGem ? "Marked as a hidden gem" : "This is a popular attraction"}
       </button>
+
+      <div className="flex flex-col gap-1.5">
+        <span className="text-[11px] font-semibold tracking-wide text-muted uppercase">
+          Cost (optional)
+        </span>
+        <div className="flex gap-2">
+          {(
+            [
+              ["BUDGET", "$"],
+              ["MODERATE", "$$"],
+              ["EXPENSIVE", "$$$"],
+            ] as [CostTier, string][]
+          ).map(([tier, label]) => (
+            <button
+              key={tier}
+              type="button"
+              onClick={() => setCostTier((v) => (v === tier ? null : tier))}
+              className={`rounded-full border px-3.5 py-1.5 text-[13px] font-bold ${
+                costTier === tier
+                  ? "border-accent bg-accent-soft text-accent"
+                  : "border-border bg-surface-2 text-muted"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <label className="flex flex-col gap-1">
         <span className="text-[11px] font-semibold tracking-wide text-muted uppercase">

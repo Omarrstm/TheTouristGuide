@@ -8,6 +8,7 @@ import ReviewForm from "@/components/ReviewForm";
 import DeletePlaceButton from "@/components/DeletePlaceButton";
 import ReviewPhotoGallery from "@/components/ReviewPhotoGallery";
 import AddToTripButton from "@/components/AddToTripButton";
+import { COST_TIER_LABEL } from "@/components/PlaceCard";
 import FavoriteButton from "@/components/FavoriteButton";
 import ReportButton from "@/components/ReportButton";
 import { reportPlace } from "@/app/reports/actions";
@@ -87,6 +88,11 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
         </div>
         <p className="mt-1 text-[13.5px] text-muted">
           {place.city}, {place.country.name}
+          {place.costTier && (
+            <span className="ml-1.5 font-semibold text-text">
+              &middot; {COST_TIER_LABEL[place.costTier]}
+            </span>
+          )}
         </p>
         {avgRating != null && (
           <p className="mt-2 text-[14px] font-semibold text-accent">

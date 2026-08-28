@@ -37,6 +37,7 @@ export default async function EditPlacePage(props: PageProps<"/places/[id]/edit"
           city: place.city,
           description: place.description,
           isHiddenGem: place.isHiddenGem,
+          costTier: place.costTier,
           location:
             place.latitude != null && place.longitude != null
               ? {

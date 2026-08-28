@@ -103,6 +103,7 @@ export default async function HomePage() {
                   name: p.name,
                   city: p.city,
                   isHiddenGem: p.isHiddenGem,
+                  costTier: p.costTier,
                   photoUrl: p.photos[0]?.url ?? null,
                   countryName: p.country.name,
                 }}

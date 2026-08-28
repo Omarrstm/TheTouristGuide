@@ -6,10 +6,17 @@ export type PlaceCardData = {
   name: string;
   city: string;
   isHiddenGem: boolean;
+  costTier?: "BUDGET" | "MODERATE" | "EXPENSIVE" | null;
   photoUrl?: string | null;
   countryName?: string;
   avgRating?: number | null;
   reviewCount?: number;
+};
+
+export const COST_TIER_LABEL: Record<"BUDGET" | "MODERATE" | "EXPENSIVE", string> = {
+  BUDGET: "$",
+  MODERATE: "$$",
+  EXPENSIVE: "$$$",
 };
 
 export default function PlaceCard({
@@ -47,6 +54,11 @@ export default function PlaceCard({
           <p className="text-[12px] text-muted">
             {place.city}
             {place.countryName ? `, ${place.countryName}` : ""}
+            {place.costTier && (
+              <span className="ml-1.5 font-semibold text-text">
+                &middot; {COST_TIER_LABEL[place.costTier]}
+              </span>
+            )}
           </p>
           {place.avgRating != null && (
             <p className="mt-auto pt-1 text-[12px] font-semibold text-accent">

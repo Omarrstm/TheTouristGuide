@@ -33,6 +33,7 @@ export default async function FavoritesPage() {
       name: place.name,
       city: place.city,
       isHiddenGem: place.isHiddenGem,
+      costTier: place.costTier,
       countryName: place.country.name,
       photoUrl: place.photos[0]?.url ?? null,
       avgRating,

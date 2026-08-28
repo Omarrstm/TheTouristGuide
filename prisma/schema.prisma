@@ -63,12 +63,19 @@ model Country {
   guides GuideProfile[]
 }
 
+enum CostTier {
+  BUDGET
+  MODERATE
+  EXPENSIVE
+}
+
 model Place {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   city        String
   description String
-  isHiddenGem Boolean @default(false)
+  isHiddenGem Boolean  @default(false)
+  costTier    CostTier?
   createdAt   DateTime @default(now())
 
   latitude         Float?
