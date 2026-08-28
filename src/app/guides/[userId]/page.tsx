@@ -61,6 +61,18 @@ export default async function GuideDetailPage(props: PageProps<"/guides/[userId]
             </span>
           </p>
         )}
+        {profile.specialties.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {profile.specialties.map((s) => (
+              <span
+                key={s}
+                className="rounded-full border border-accent-teal bg-accent-teal-soft px-2.5 py-1 text-[10.5px] font-bold text-accent-teal uppercase"
+              >
+                {s}
+              </span>
+            ))}
+          </div>
+        )}
         {profile.languages.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1.5">
             {profile.languages.map((l) => (

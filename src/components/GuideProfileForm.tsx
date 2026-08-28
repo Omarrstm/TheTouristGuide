@@ -10,6 +10,7 @@ type Country = { id: string; name: string };
 type Initial = {
   bio: string;
   languages: string;
+  specialties: string;
   city: string;
   countryId: string;
   isPublic: boolean;
@@ -26,6 +27,7 @@ export default function GuideProfileForm({
   const [isPending, startTransition] = useTransition();
   const [bio, setBio] = useState(initial?.bio ?? "");
   const [languages, setLanguages] = useState(initial?.languages ?? "");
+  const [specialties, setSpecialties] = useState(initial?.specialties ?? "");
   const [city, setCity] = useState(initial?.city ?? "");
   const [countryId, setCountryId] = useState(initial?.countryId ?? "");
   const [isPublic, setIsPublic] = useState(initial?.isPublic ?? true);
@@ -38,7 +40,7 @@ export default function GuideProfileForm({
     setStatus(null);
     startTransition(async () => {
       try {
-        await upsertGuideProfile({ bio, languages, city, countryId, isPublic });
+        await upsertGuideProfile({ bio, languages, specialties, city, countryId, isPublic });
         setStatus("Saved.");
         router.refresh();
       } catch (e) {
@@ -78,6 +80,18 @@ export default function GuideProfileForm({
           value={languages}
           onChange={(e) => setLanguages(e.target.value)}
           placeholder="English, Spanish, French"
+          className="rounded-lg border border-border bg-surface-2 px-3 py-2.5 text-[14px] text-text outline-none placeholder:text-muted focus-visible:border-accent"
+        />
+      </label>
+
+      <label className="flex flex-col gap-1">
+        <span className="text-[11px] font-semibold tracking-wide text-muted uppercase">
+          Specialties (comma-separated)
+        </span>
+        <input
+          value={specialties}
+          onChange={(e) => setSpecialties(e.target.value)}
+          placeholder="Food tours, History, Hiking, Photography"
           className="rounded-lg border border-border bg-surface-2 px-3 py-2.5 text-[14px] text-text outline-none placeholder:text-muted focus-visible:border-accent"
         />
       </label>

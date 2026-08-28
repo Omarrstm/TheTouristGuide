@@ -155,9 +155,10 @@ model Report {
 
 model GuideProfile {
   id        String   @id @default(cuid())
-  bio       String?
-  languages String[] @default([])
-  city      String
+  bio         String?
+  languages   String[] @default([])
+  specialties String[] @default([])
+  city        String
   isPublic  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

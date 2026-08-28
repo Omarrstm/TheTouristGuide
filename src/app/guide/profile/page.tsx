@@ -32,6 +32,7 @@ export default async function GuideProfilePage() {
             ? {
                 bio: profile.bio ?? "",
                 languages: profile.languages.join(", "),
+                specialties: profile.specialties.join(", "),
                 city: profile.city,
                 countryId: profile.countryId,
                 isPublic: profile.isPublic,

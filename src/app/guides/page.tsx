@@ -67,6 +67,7 @@ export default async function GuidesPage() {
               city: g.city,
               countryName: g.country.name,
               languages: g.languages,
+              specialties: g.specialties,
               avgRating,
               ratingCount: guideRatings.length,
             };

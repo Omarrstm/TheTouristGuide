@@ -14,7 +14,8 @@ export default function GuideDirectory({ guides }: { guides: GuideCardData[] }) 
       (g) =>
         g.city.toLowerCase().includes(q) ||
         (g.countryName ?? "").toLowerCase().includes(q) ||
-        (g.name ?? "").toLowerCase().includes(q)
+        (g.name ?? "").toLowerCase().includes(q) ||
+        g.specialties.some((s) => s.toLowerCase().includes(q))
     );
   }, [guides, query]);
 
@@ -23,7 +24,7 @@ export default function GuideDirectory({ guides }: { guides: GuideCardData[] }) 
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Filter by city, country, or name"
+        placeholder="Filter by city, country, name, or specialty"
         className="w-full max-w-md rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-[14px] text-text outline-none placeholder:text-muted focus-visible:border-accent"
       />
       {filtered.length === 0 ? (

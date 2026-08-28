@@ -7,6 +7,7 @@ import { verifySession } from "@/lib/dal";
 export async function upsertGuideProfile(input: {
   bio: string;
   languages: string;
+  specialties: string;
   city: string;
   countryId: string;
   isPublic: boolean;
@@ -19,6 +20,10 @@ export async function upsertGuideProfile(input: {
     .split(",")
     .map((l) => l.trim())
     .filter(Boolean);
+  const specialties = input.specialties
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
 
   if (city.length < 2) throw new Error("Enter the city you guide in.");
   if (!input.countryId) throw new Error("Pick a country.");
@@ -28,11 +33,19 @@ export async function upsertGuideProfile(input: {
 
   await prisma.guideProfile.upsert({
     where: { userId },
-    update: { bio: bio || null, languages, city, countryId: country.id, isPublic: input.isPublic },
+    update: {
+      bio: bio || null,
+      languages,
+      specialties,
+      city,
+      countryId: country.id,
+      isPublic: input.isPublic,
+    },
     create: {
       userId,
       bio: bio || null,
       languages,
+      specialties,
       city,
       countryId: country.id,
       isPublic: input.isPublic,

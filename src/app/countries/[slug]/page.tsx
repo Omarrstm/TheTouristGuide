@@ -132,7 +132,13 @@ export default async function CountryPage(props: PageProps<"/countries/[slug]">)
               <GuideCard
                 key={g.user.id}
                 className={`fade-slide-up ${delayClass(i)}`}
-                guide={{ userId: g.user.id, name: g.user.name, city: g.city, languages: g.languages }}
+                guide={{
+                  userId: g.user.id,
+                  name: g.user.name,
+                  city: g.city,
+                  languages: g.languages,
+                  specialties: g.specialties,
+                }}
               />
             ))}
           </div>

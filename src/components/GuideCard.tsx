@@ -6,6 +6,7 @@ export type GuideCardData = {
   city: string;
   countryName?: string;
   languages: string[];
+  specialties: string[];
   avgRating?: number | null;
   ratingCount?: number;
 };
@@ -33,8 +34,20 @@ export default function GuideCard({
             </span>
           </p>
         )}
-        {guide.languages.length > 0 && (
+        {guide.specialties.length > 0 && (
           <div className="mt-1 flex flex-wrap gap-1.5">
+            {guide.specialties.map((s) => (
+              <span
+                key={s}
+                className="rounded-full border border-accent-teal bg-accent-teal-soft px-2 py-0.5 text-[10.5px] font-bold text-accent-teal uppercase"
+              >
+                {s}
+              </span>
+            ))}
+          </div>
+        )}
+        {guide.languages.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
             {guide.languages.map((l) => (
               <span
                 key={l}
