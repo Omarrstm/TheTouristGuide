@@ -1,6 +1,6 @@
 import "server-only";
 import { cache } from "react";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSessionCookie } from "@/lib/session";
 
@@ -9,6 +9,7 @@ const userSelect = {
   email: true,
   name: true,
   homeCountry: true,
+  isAdmin: true,
 } as const;
 
 export const verifySession = cache(async () => {
@@ -45,4 +46,10 @@ export const getOptionalUser = cache(async () => {
     where: { id: session.userId },
     select: userSelect,
   });
+});
+
+export const getAdmin = cache(async () => {
+  const user = await getUser();
+  if (!user.isAdmin) notFound();
+  return user;
 });

@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getOptionalUser } from "@/lib/dal";
 import StartConversationForm from "@/components/StartConversationForm";
+import ReportButton from "@/components/ReportButton";
+import { reportUser } from "@/app/reports/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -67,7 +69,16 @@ export default async function GuideDetailPage(props: PageProps<"/guides/[userId]
           .
         </p>
       ) : viewer ? (
-        <StartConversationForm guideUserId={userId} />
+        <div className="flex flex-col gap-3">
+          <StartConversationForm guideUserId={userId} />
+          <ReportButton
+            label="Report user"
+            onSubmit={async (reason) => {
+              "use server";
+              await reportUser({ userId, reason });
+            }}
+          />
+        </div>
       ) : (
         <p className="text-[13px] text-muted">
           <Link

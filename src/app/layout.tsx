@@ -62,7 +62,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 sm:px-6 lg:px-10">
           <AppHeader
-            user={user ? { name: user.name } : null}
+            user={user ? { name: user.name, isAdmin: user.isAdmin } : null}
             hasUnreadMessages={hasUnreadMessages}
             notifications={notifications}
           />

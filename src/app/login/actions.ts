@@ -25,6 +25,8 @@ export async function login(_prevState: AuthFormState, formData: FormData): Prom
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) return { error: "Invalid email or password." };
 
+  if (user.suspendedAt) return { error: "This account has been suspended." };
+
   await createSession(user.id);
   redirect(next ?? "/");
 }

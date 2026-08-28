@@ -4,7 +4,9 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { deleteReview, updateReview } from "@/app/actions";
+import { reportReview } from "@/app/reports/actions";
 import StarRatingInput from "@/components/StarRatingInput";
+import ReportButton from "@/components/ReportButton";
 
 export type ReviewData = {
   id: string;
@@ -133,6 +135,11 @@ export default function ReviewCard({
           >
             {confirmingDelete ? "Confirm?" : "Delete"}
           </button>
+        </div>
+      )}
+      {!isOwner && currentUserId && (
+        <div className="mt-2.5">
+          <ReportButton onSubmit={(reason) => reportReview({ reviewId: review.id, reason })} />
         </div>
       )}
     </div>

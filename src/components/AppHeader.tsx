@@ -8,7 +8,7 @@ export default function AppHeader({
   hasUnreadMessages = false,
   notifications = [],
 }: {
-  user: { name: string | null } | null;
+  user: { name: string | null; isAdmin?: boolean } | null;
   hasUnreadMessages?: boolean;
   notifications?: NotificationData[];
 }) {
@@ -85,6 +85,15 @@ export default function AppHeader({
                 Log Out
               </button>
             </form>
+            {user.isAdmin && (
+              <Link
+                href="/admin/reports"
+                prefetch={false}
+                className="text-[13px] font-semibold tracking-wide text-muted hover:text-accent"
+              >
+                Admin
+              </Link>
+            )}
           </>
         ) : (
           <>
