@@ -6,6 +6,7 @@ import PlaceCard, { type PlaceCardData } from "@/components/PlaceCard";
 import TripNameEditor from "@/components/TripNameEditor";
 import DeleteItineraryButton from "@/components/DeleteItineraryButton";
 import RemoveFromTripButton from "@/components/RemoveFromTripButton";
+import ShareTripButton from "@/components/ShareTripButton";
 import { delayClass } from "@/lib/animationDelay";
 
 export const dynamic = "force-dynamic";
@@ -79,6 +80,14 @@ export default async function TripDetailPage(props: PageProps<"/trips/[id]">) {
             year: "numeric",
           })}
         </p>
+      </div>
+
+      <div className="fade-slide-up">
+        <ShareTripButton
+          itineraryId={itinerary.id}
+          initialIsShared={itinerary.isShared}
+          initialShareToken={itinerary.shareToken}
+        />
       </div>
 
       {itinerary.items.length === 0 ? (

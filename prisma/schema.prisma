@@ -185,9 +185,11 @@ model Conversation {
 }
 
 model Itinerary {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  name       String
+  createdAt  DateTime @default(now())
+  isShared   Boolean  @default(false)
+  shareToken String   @unique @default(cuid())
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
