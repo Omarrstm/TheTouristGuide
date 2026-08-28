@@ -8,6 +8,7 @@ import ReviewForm from "@/components/ReviewForm";
 import DeletePlaceButton from "@/components/DeletePlaceButton";
 import ReviewPhotoGallery from "@/components/ReviewPhotoGallery";
 import AddToTripButton from "@/components/AddToTripButton";
+import FavoriteButton from "@/components/FavoriteButton";
 import ReportButton from "@/components/ReportButton";
 import { reportPlace } from "@/app/reports/actions";
 
@@ -58,6 +59,12 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
       ).map((t) => ({ id: t.id, name: t.name, hasPlace: t.items.length > 0 }))
     : [];
 
+  const isFavorited = user
+    ? (await prisma.favorite.findUnique({
+        where: { userId_placeId: { userId: user.id, placeId: place.id } },
+      })) !== null
+    : false;
+
   return (
     <main className="flex flex-col gap-8 pt-8 pb-20">
       <div className="fade-slide-up">
@@ -90,8 +97,9 @@ export default async function PlaceDetailPage(props: PageProps<"/places/[id]">) 
           </p>
         )}
         {user && (
-          <div className="mt-3">
+          <div className="mt-3 flex flex-wrap items-center gap-3">
             <AddToTripButton placeId={place.id} trips={trips} />
+            <FavoriteButton placeId={place.id} initialFavorited={isFavorited} />
           </div>
         )}
         {isOwner && (

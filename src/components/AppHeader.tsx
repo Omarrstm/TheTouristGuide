@@ -71,6 +71,13 @@ export default function AppHeader({
               My Trips
             </Link>
             <Link
+              href="/favorites"
+              prefetch={false}
+              className="text-[13px] font-semibold tracking-wide text-muted hover:text-accent"
+            >
+              Saved
+            </Link>
+            <Link
               href="/account"
               prefetch={false}
               className="text-[13px] font-semibold tracking-wide text-muted hover:text-accent"
