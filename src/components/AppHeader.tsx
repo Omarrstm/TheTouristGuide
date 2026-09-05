@@ -78,6 +78,13 @@ export default function AppHeader({
               Saved
             </Link>
             <Link
+              href="/following"
+              prefetch={false}
+              className="text-[13px] font-semibold tracking-wide text-muted hover:text-accent"
+            >
+              Following
+            </Link>
+            <Link
               href="/account"
               prefetch={false}
               className="text-[13px] font-semibold tracking-wide text-muted hover:text-accent"

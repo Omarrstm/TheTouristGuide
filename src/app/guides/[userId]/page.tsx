@@ -7,13 +7,14 @@ import ReportButton from "@/components/ReportButton";
 import { reportUser } from "@/app/reports/actions";
 import GuideRatingForm from "@/components/GuideRatingForm";
 import GuideRatingCard from "@/components/GuideRatingCard";
+import FollowButton from "@/components/FollowButton";
 
 export const dynamic = "force-dynamic";
 
 export default async function GuideDetailPage(props: PageProps<"/guides/[userId]">) {
   const { userId } = await props.params;
 
-  const [profile, viewer, ratings] = await Promise.all([
+  const [profile, viewer, ratings, followerCount] = await Promise.all([
     prisma.guideProfile.findUnique({
       where: { userId },
       include: { user: { select: { id: true, name: true } }, country: true },
@@ -24,6 +25,7 @@ export default async function GuideDetailPage(props: PageProps<"/guides/[userId]
       orderBy: { createdAt: "desc" },
       include: { rater: { select: { name: true } } },
     }),
+    prisma.follow.count({ where: { followingId: userId } }),
   ]);
 
   if (!profile || (!profile.isPublic && viewer?.id !== userId)) notFound();
@@ -33,6 +35,12 @@ export default async function GuideDetailPage(props: PageProps<"/guides/[userId]
   const avgRating =
     ratingCount > 0 ? ratings.reduce((sum, r) => sum + r.rating, 0) / ratingCount : null;
   const viewerHasRated = viewer != null && ratings.some((r) => r.raterId === viewer.id);
+  const isFollowing =
+    viewer != null
+      ? (await prisma.follow.findUnique({
+          where: { followerId_followingId: { followerId: viewer.id, followingId: userId } },
+        })) !== null
+      : false;
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-6 pt-8 pb-20">
@@ -59,6 +67,11 @@ export default async function GuideDetailPage(props: PageProps<"/guides/[userId]
             <span className="font-normal text-muted">
               ({ratingCount} {ratingCount === 1 ? "rating" : "ratings"})
             </span>
+          </p>
+        )}
+        {followerCount > 0 && (
+          <p className="mt-1 text-[12.5px] text-muted">
+            {followerCount} {followerCount === 1 ? "follower" : "followers"}
           </p>
         )}
         {profile.specialties.length > 0 && (
@@ -101,6 +114,7 @@ export default async function GuideDetailPage(props: PageProps<"/guides/[userId]
         </p>
       ) : viewer ? (
         <div className="flex flex-col gap-3">
+          <FollowButton userId={userId} initialFollowing={isFollowing} />
           <StartConversationForm guideUserId={userId} />
           <ReportButton
             label="Report user"

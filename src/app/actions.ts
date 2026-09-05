@@ -195,6 +195,21 @@ export async function createReview(input: {
     });
   }
 
+  const author = await prisma.user.findUnique({ where: { id: userId }, select: { name: true } });
+  const followers = await prisma.follow.findMany({
+    where: { followingId: userId },
+    select: { followerId: true },
+  });
+  for (const { followerId } of followers) {
+    await notifyUser({
+      userId: followerId,
+      type: "FOLLOWED_USER_REVIEW",
+      title: `${author?.name ?? "Someone you follow"} posted a new review`,
+      body: `${place.name}`,
+      href: `/places/${input.placeId}`,
+    });
+  }
+
   revalidatePath(`/places/${input.placeId}`);
 }
 

@@ -44,6 +44,9 @@ model User {
   favorites Favorite[]
 
   helpfulVotes ReviewHelpfulVote[]
+
+  following Follow[] @relation("Following")
+  followers Follow[] @relation("Followers")
 }
 
 model Session {
@@ -222,6 +225,7 @@ enum NotificationType {
   NEW_MESSAGE
   NEW_REVIEW
   NEW_GUIDE_RATING
+  FOLLOWED_USER_REVIEW
 }
 
 model Notification {
@@ -294,4 +298,17 @@ model ReviewHelpfulVote {
   review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
   @@unique([userId, reviewId])
+}
+
+model Follow {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  followerId String
+  follower   User   @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+
+  followingId String
+  following   User   @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
 }
